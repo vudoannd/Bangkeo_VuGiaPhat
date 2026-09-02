@@ -563,6 +563,14 @@
                   '<div class="form-text fs-12 mb-2">Chỉ nhập TÊN FILE. Ảnh phải nằm sẵn trong ' +
                     'thư mục <code>images/products/</code> — trình duyệt không có quyền tự chép ' +
                     'file vào đó, phải chép tay.</div>' +
+              '<div class="col-12 mt-3">' +
+                '<label class="form-label" for="f-gallery">Thư viện ảnh (Gallery Carousel)</label>' +
+                '<textarea class="form-control" id="f-gallery" name="gallery" rows="2" ' +
+                          'placeholder="[\'anh1.jpg\', \'anh2.jpg\']">' + 
+                          esc(typeof p.gallery === 'string' ? p.gallery : (Array.isArray(p.gallery) ? JSON.stringify(p.gallery) : '')) + '</textarea>' +
+                '<div class="form-text fs-12">Nhập mảng JSON ví dụ: <code>["anh1.jpg", "anh2.jpg"]</code> để hiển thị Carousel.</div>' +
+              '</div>' +
+
                   (imgs.length
                     ? '<div class="img-pick">' + imgs.map(function (f) {
                         return '<button type="button" data-img="' + esc(f) + '" ' +
@@ -663,6 +671,15 @@
       application: form.querySelector('[name="application"]').value.trim() || null,
       price: Number(String(form.elements.price.value).replace(/[^\d]/g, '')),
       image: form.elements.image.value.trim() || null,
+        gallery: (function() {
+          var val = form.elements.gallery.value.trim();
+          if (!val) return null;
+          try {
+             if (val.startsWith('[')) return val;
+             return JSON.stringify(val.split(',').map(s => s.trim()));
+          } catch(e) { return val; }
+        })(),
+
       in_stock: form.elements.in_stock.checked ? 1 : 0,
       moq: form.elements.moq.value.trim() || null,
       rating: rating === '' ? null : Number(rating.replace(',', '.'))

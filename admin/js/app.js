@@ -19,6 +19,7 @@
 
   var $ = Admin.$, $$ = Admin.$$;
   var esc = Admin.util.esc;
+  var ui = Admin.ui;
 
   /* ======================================================================
    * 1. CÁC MỤC ĐÃ ĐĂNG KÝ
@@ -119,7 +120,9 @@
       }).then(function (ok) { if (ok) Admin.auth.logout('dang-xuat'); });
     });
 
-    $('#btnProfile').addEventListener('click', function () { Admin.openProfile(); });
+    $('#btnProfile').addEventListener('click', function () {
+      ui.toast('Tính năng đang phát triển.', 'info');
+    });
   }
 
   function initials(name) {

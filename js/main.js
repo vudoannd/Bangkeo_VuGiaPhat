@@ -24,11 +24,7 @@
    * 1. HẰNG SỐ & TIỆN ÍCH DÙNG CHUNG
    * ====================================================================== */
 
-  /* Nguồn dữ liệu — xem giải thích đầy đủ ở mục 2 bên dưới.
-     DB_URL là nguồn chính: chính file mà khu quản trị /admin ghi vào. */
-  var DB_URL       = 'VuGiaPhat.db';
-  var SQLJS_CDN    = 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/';
-    var IMG_DIR      = 'images/products/';
+  var IMG_DIR      = 'images/products/';
   var PAGE_SIZE    = 12;   // số sản phẩm mỗi lần "Xem thêm"
   var HOME_LATEST  = 8;    // số sản phẩm mới nhất trên trang chủ
   var FEEDBACK_KEY = 'vgp_feedback';
@@ -43,6 +39,7 @@
     style: 'currency', currency: 'VND', maximumFractionDigits: 0
   });
   function formatPrice(n) {
+    if (n === 0) return '<span class="text-danger fw-bold">Liên hệ báo giá</span>';
     return (typeof n === 'number' && isFinite(n)) ? vnd.format(n) : 'Liên hệ';
   }
 
@@ -101,92 +98,7 @@
    *   categories: [{ id, name, description, count }]
    *   products:   [{ id, title, description, moq, rating, categoryId,
    *                  categoryName, price, inStock, image, search }]
-   *
-   * Có HAI nguồn cùng đổ về cấu trúc này — CSDL SQLite và file JSON — nên
-   * quy ước phải giống hệt nhau, nếu không đổi nguồn là giao diện vỡ.
-   *
-   * Riêng `name` của danh mục là TÊN HIỂN THỊ ĐẦY ĐỦ ("Băng keo Giấy"), chứ
-   * không phải mảnh tên rồi ghép thêm chữ ở chỗ hiển thị. CSDL lưu sẵn tên
-   * đầy đủ, còn JSON chỉ có "Giấy" nên nhánh JSON tự thêm tiền tố vào.
    */
-
-  /** ---- Nguồn 1: CSDL SQLite (VuGiaPhat.db) — nguồn chính ---- */
-  function normalizeFromDb(db) {
-    var categories = [];
-    var catById = {};
-
-    each(db, 'SELECT id, name, description FROM category ORDER BY id', function (c) {
-      var cat = { id: c.id, name: String(c.name || '').trim(),
-                  description: c.description || '', count: 0 };
-      catById[c.id] = cat;
-      categories.push(cat);
-    });
-
-    var products = [];
-    each(db,
-      'SELECT p.id, p.category_id, p.name, p.description, p.price, p.image, ' +
-      '       p.in_stock, p.moq, p.rating ' +
-      'FROM product p ORDER BY p.id',
-      function (p) {
-        var title = String(p.name || '').trim();
-        var cat = catById[p.category_id];
-        if (cat) cat.count++;
-
-        products.push({
-          id:           String(p.id),
-          title:        title,
-          description:  p.description || '',
-          thickness: p.thickness || '',
-            weight: p.weight || '',
-            length: p.length || '',
-            adhesion: p.adhesion || '',
-            application: p.application || '',
-            moq:          String(p.moq || '').trim(),
-          // rating để NULL nghĩa là "chưa ai đánh giá", khác hẳn "bị chấm 0 sao"
-          rating:       (p.rating === null || p.rating === undefined) ? null : Number(p.rating),
-          categoryId:   p.category_id,
-          categoryName: cat ? cat.name : 'Khác',
-          price:        isFinite(p.price) ? Number(p.price) : null,
-          inStock:      Number(p.in_stock) !== 0,
-          image:        p.image ? IMG_DIR + p.image.replace(/\.(png|jpg|jpeg)$/i, '.webp') : '',
-          search:       deaccent(title)   // dựng sẵn để tìm kiếm không dấu cho nhanh
-        });
-      });
-
-    return { categories: categories, products: products, source: 'sqlite' };
-  }
-
-  /** Duyệt kết quả một câu lệnh SELECT của sql.js, nhớ giải phóng câu lệnh. */
-  function each(db, sql, fn) {
-    var st = db.prepare(sql);
-    try {
-      while (st.step()) fn(st.getAsObject());
-    } finally {
-      st.free();
-    }
-  }
-
-  /**
-   * ---- Nguồn 2: bangkeo.json / bản nhúng — chỉ dùng khi không mở được CSDL ----
-   *
-   * QUAN TRỌNG: file bangkeo.json có một số key bị dính dấu cách ở hai đầu,
-   * cụ thể là " moq ", " rating ", " price_vnd " và cả category.name (" Giấy ").
-   * Truy cập thẳng obj.price_vnd sẽ trả về undefined, nên phải đi qua pick().
-   */
-  
-
-  /* ----------------------------------------------------------------------
-   * Nạp dữ liệu — ba nấc, rơi xuống nấc dưới khi nấc trên hỏng
-   *
-   *   1. VuGiaPhat.db qua sql.js   <- nguồn thật, khu quản trị ghi vào đây
-   *   2. data/bangkeo.json         <- ảnh chụp dữ liệu ban đầu
-   *   3. data/bangkeo.data.js      <- bản nhúng, chạy được cả khi mở file://
-   *
-   * Nấc 1 cần ba thứ cùng có mặt: thư viện sql.js từ CDN, giao thức HTTP (vì
-   * file:// chặn fetch), và chính file .db. Thiếu một thứ là tụt xuống nấc 2
-   * chứ không để trang trắng — website giới thiệu sản phẩm mà không hiện được
-   * sản phẩm thì hỏng hoàn toàn, còn hiện dữ liệu cũ vẫn dùng tạm được.
-   * -------------------------------------------------------------------- */
 
   function loadData() {
     return loadFromSupabase();
@@ -232,6 +144,8 @@
           price:        isFinite(p.price) ? Number(p.price) : null,
           inStock:      Number(p.in_stock) !== 0,
           image:        p.image ? IMG_DIR + p.image.replace(/\.(png|jpg|jpeg)$/i, '.webp') : '',
+          gallery:      p.gallery,
+          galleryParsed: (function(){ try { var g = typeof p.gallery === "string" ? JSON.parse(p.gallery) : (Array.isArray(p.gallery) ? p.gallery : []); return g.map(function(img) { return img ? IMG_DIR + img.replace(/\.(png|jpg|jpeg)$/i, ".webp") : ""; }); } catch(e) { return []; } })(),
           search:       deaccent(p.name)
         };
       });
@@ -289,8 +203,9 @@
 
   /** Dựng thẻ sản phẩm bằng lớp .card của Bootstrap. isNew = gắn nhãn "Mới". */
   function productCardHTML(p, isNew) {
+    var hideClass = (!p.image && document.body.getAttribute('data-page') === 'home') ? ' d-none' : '';
     return '' +
-      '<div class="col-6 col-md-4 col-lg-3">' +
+      '<div class="col-6 col-md-4 col-lg-3' + hideClass + '">' +
         '<article class="card h-100 border product-card reveal" data-id="' + esc(p.id) + '">' +
           '<div class="product-media">' +
             '<div class="position-absolute top-0 start-0 m-2 d-flex flex-column gap-1 ' +
@@ -305,8 +220,24 @@
                 : '<span class="badge bg-danger-subtle text-danger-emphasis ' +
                   'border border-danger-subtle shadow-sm">Hết hàng</span>') +
             '</div>' +
-            '<img src="' + esc(p.image) + '" alt="' + esc(p.title) + '" loading="lazy" ' +
-                 'onerror="this.onerror=null;this.src=\'' + FALLBACK_IMG + '\'">' +
+                          (function() {
+                var images = p.galleryParsed && p.galleryParsed.length > 0 ? p.galleryParsed : [p.image || FALLBACK_IMG];
+                if (images.length === 1) {
+                  return '<img src="' + esc(images[0]) + '" alt="' + esc(p.title) + '" loading="lazy" onerror="this.onerror=null;this.src=\'' + FALLBACK_IMG + '\'">';
+                }
+                var cid = 'cardCarousel' + p.id;
+                var html = '<div id="' + cid + '" class="carousel slide h-100" data-bs-ride="false">';
+                html += '<div class="carousel-inner h-100">';
+                for (var i = 0; i < images.length; i++) {
+                  html += '<div class="carousel-item h-100 ' + (i===0?'active':'') + '"><img src="' + esc(images[i]) + '" class="d-block w-100" alt="' + esc(p.title) + '" style="object-fit:contain;" loading="lazy" onerror="this.onerror=null;this.src=\'' + FALLBACK_IMG + '\'"></div>';
+                }
+                html += '</div>';
+                html += '<button class="carousel-control-prev" type="button" data-bs-target="#' + cid + '" data-bs-slide="prev" onclick="event.preventDefault(); event.stopPropagation();" style="z-index: 10;"><span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true" style="transform: scale(0.7)"></span><span class="visually-hidden">Trước</span></button>';
+                html += '<button class="carousel-control-next" type="button" data-bs-target="#' + cid + '" data-bs-slide="next" onclick="event.preventDefault(); event.stopPropagation();" style="z-index: 10;"><span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true" style="transform: scale(0.7)"></span><span class="visually-hidden">Sau</span></button>';
+                html += '</div>';
+                return html;
+              })() +
+
             '<button type="button" class="btn btn-primary btn-sm rounded-pill quick-view" ' +
                     'data-quick="' + esc(p.id) + '">' +
               '<i class="bi bi-eye me-1"></i>Xem nhanh</button>' +
@@ -481,30 +412,75 @@
     if (!modalEl) return;
     var modal = new bootstrap.Modal(modalEl);
 
-    document.addEventListener('click', function (e) {
-      var btn = e.target.closest('[data-quick]');
-      if (!btn) return;
-      var p = getProduct(btn.getAttribute('data-quick'));
-      if (!p) return;
+          document.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-quick]');
+        if (!btn) return;
+        var p = getProduct(btn.getAttribute('data-quick'));
+        if (!p) return;
+  
+        $('#quickViewLabel', modalEl).textContent = p.title;
 
-      $('#quickViewLabel', modalEl).textContent = p.title;
-      $('#quickViewBody', modalEl).innerHTML =
-        '<div class="row g-4">' +
-          '<div class="col-sm-5">' +
-            '<div class="product-media border rounded">' +
-              '<img src="' + esc(p.image) + '" alt="' + esc(p.title) + '" ' +
-                   'onerror="this.onerror=null;this.src=\'' + FALLBACK_IMG + '\'">' +
+        // Build Image Gallery
+        var galleryHtml = '';
+        var images = [];
+        
+        // Parse gallery if it's a JSON string
+        var parsedGallery = [];
+        if (p.galleryParsed && p.galleryParsed.length > 0) { parsedGallery = p.galleryParsed; } else if (typeof p.gallery === 'string' && p.gallery.trim().startsWith('[')) {
+            try {
+                parsedGallery = JSON.parse(p.gallery);
+            } catch (e) {
+                console.error("Lỗi parse gallery:", e);
+            }
+        } else if (Array.isArray(p.gallery)) {
+            parsedGallery = p.gallery;
+        }
+
+        if (parsedGallery && parsedGallery.length > 0) {
+            images = parsedGallery;
+        } else if (p.image) {
+            images = [p.image];
+        } else {
+            images = [FALLBACK_IMG];
+        }
+
+        if (images.length === 1) {
+            galleryHtml = '<div class="product-media border rounded"><img src="' + esc(images[0]) + '" alt="' + esc(p.title) + '" onerror="this.onerror=null;this.src=\'' + FALLBACK_IMG + '\'"></div>';
+        } else {
+            // Build Bootstrap Carousel
+            var carouselId = 'carouselProduct' + p.id;
+            var indicators = '<div class="carousel-indicators">';
+            var inner = '<div class="carousel-inner rounded border">';
+            
+            for (var i = 0; i < images.length; i++) {
+                var active = i === 0 ? 'active' : '';
+                var activeAria = i === 0 ? 'aria-current="true"' : '';
+                indicators += '<button type="button" data-bs-target="#' + carouselId + '" data-bs-slide-to="' + i + '" class="' + active + '" ' + activeAria + ' aria-label="Slide ' + (i+1) + '"></button>';
+                inner += '<div class="carousel-item ' + active + '"><img src="' + esc(images[i]) + '" class="d-block w-100" style="object-fit: contain; aspect-ratio: 1/1;" alt="Hình ' + (i+1) + '" onerror="this.onerror=null;this.src=\'' + FALLBACK_IMG + '\'"></div>';
+            }
+            indicators += '</div>';
+            inner += '</div>';
+            
+            var controls = '<button class="carousel-control-prev" type="button" data-bs-target="#' + carouselId + '" data-bs-slide="prev"><span class="carousel-control-prev-icon bg-dark rounded-circle" style="padding: 1.5rem" aria-hidden="true"></span><span class="visually-hidden">Trước</span></button>' +
+                           '<button class="carousel-control-next" type="button" data-bs-target="#' + carouselId + '" data-bs-slide="next"><span class="carousel-control-next-icon bg-dark rounded-circle" style="padding: 1.5rem" aria-hidden="true"></span><span class="visually-hidden">Sau</span></button>';
+            
+            galleryHtml = '<div id="' + carouselId + '" class="carousel slide" data-bs-ride="carousel">' + indicators + inner + controls + '</div>';
+        }
+
+        $('#quickViewBody', modalEl).innerHTML =
+          '<div class="row g-4">' +
+            '<div class="col-sm-5">' +
+              galleryHtml +
             '</div>' +
-          '</div>' +
-          '<div class="col-sm-7">' +
-            '<span class="badge rounded-pill bg-primary-subtle text-primary-emphasis mb-2">' +
-              esc(p.categoryName) + '</span>' +
-            '<div class="mb-2">' + starsHTML(p.rating) + '</div>' +
-            '<p class="fw-bold text-brand mb-0" style="font-size:1.6rem">' +
-              formatPrice(p.price) + '</p>' +
-            '<p class="small text-body-tertiary">' +
-              'Giá tham khảo cho một đơn vị. Liên hệ để được báo giá số lượng lớn.</p>' +
-            (function() {
+            '<div class="col-sm-7">' +
+              '<span class="badge rounded-pill bg-primary-subtle text-primary-emphasis mb-2">' +
+                esc(p.categoryName) + '</span>' +
+              '<div class="mb-2">' + starsHTML(p.rating) + '</div>' +
+              '<p class="fw-bold text-brand mb-0" style="font-size:1.6rem">' +
+                formatPrice(p.price) + '</p>' +
+              '<p class="small text-body-tertiary">' +
+                'Giá tham khảo cho một đơn vị. Liên hệ để được báo giá sỉ lớn.</p>' +
+              (function() {
               var specs = { text: p.description || '', thickness: p.thickness || '', weight: p.weight || '', length: p.length || '', adhesion: p.adhesion || '', application: p.application || '' };
               var html = '';
               if (specs.text) {
@@ -526,10 +502,10 @@
             '<div class="d-flex flex-column gap-2 mt-3">' +
               '<a class="btn btn-primary w-100" href="contact.html">' +
                 '<i class="bi bi-envelope me-1"></i>Nhận báo giá sỉ</a>' +
-                  '<a class=\"btn w-100 text-white\" style=\"background-color: #0068ff\" href=\"' + (window.__SETTINGS_MAP__ ? window.__SETTINGS_MAP__.zalo_link : '#') + '\" target=\"_blank\">' +
-                  '<i class=\"bi bi-chat-dots me-1\"></i>Chat Zalo (' + (window.__SETTINGS_MAP__ ? window.__SETTINGS_MAP__.hotline1 : '') + ')</a>' +
-                '<a class=\"btn btn-success w-100\" href=\"tel:' + (window.__SETTINGS_MAP__ ? window.__SETTINGS_MAP__.hotline1.replace(/\s+/g, '') : '') + '\">' +
-                  '<i class=\"bi bi-telephone-fill me-1\"></i>Gọi Hotline (' + (window.__SETTINGS_MAP__ ? window.__SETTINGS_MAP__.hotline1 : '') + ')</a>' +
+              '<a class="btn w-100 text-white" style="background-color: #0068ff" href="' + (window.__SETTINGS_MAP__ && window.__SETTINGS_MAP__.zalo_link ? window.__SETTINGS_MAP__.zalo_link : '#') + '" target="_blank">' +
+                '<i class="bi bi-chat-dots me-1"></i>Chat Zalo (' + (window.__SETTINGS_MAP__ && window.__SETTINGS_MAP__.hotline1 ? window.__SETTINGS_MAP__.hotline1 : '') + ')</a>' +
+              '<a class="btn btn-success w-100" href="tel:' + (window.__SETTINGS_MAP__ && window.__SETTINGS_MAP__.hotline1 ? window.__SETTINGS_MAP__.hotline1.replace(/\s+/g, '') : '') + '">' +
+                '<i class="bi bi-telephone-fill me-1"></i>Gọi Hotline (' + (window.__SETTINGS_MAP__ && window.__SETTINGS_MAP__.hotline1 ? window.__SETTINGS_MAP__.hotline1 : '') + ')</a>' +
             '</div>' +
           '</div>' +
         '</div>';
@@ -557,7 +533,7 @@
          duy nhất còn viết cứng ở đây — tên và mô tả đều lấy từ CSDL, nên sửa
          danh mục trong /admin là trang chủ đổi theo. Danh mục mới do quản trị
          viên thêm sẽ dùng biểu tượng mặc định. */
-      var icons = { 1: 'bi-file-earmark-text', 2: 'bi-record-circle', 3: 'bi-globe' };
+      var icons = { 1: 'bi-tags', 2: 'bi-box-seam', 3: 'bi-layers', 4: 'bi-brush', 5: 'bi-archive' };
 
       catWrap.innerHTML = data.categories.map(function (c, i) {
         return '<div class="col-md-4">' +
@@ -584,16 +560,62 @@
       observeReveal();
     }
 
-    /* --- Ảnh nền carousel: lấy một sản phẩm tiêu biểu của mỗi danh mục --- */
-    $$('.carousel-item[data-cat]').forEach(function (slide) {
-      var catId = Number(slide.getAttribute('data-cat'));
-      var sample = data.products.filter(function (p) { return p.categoryId === catId; })[0];
-      var img = $('.slide-bg', slide);
-      if (sample && img) {
-        img.onerror = function () { this.onerror = null; this.src = FALLBACK_IMG; };
-        img.src = sample.image;
-      }
-    });
+    /* --- Khởi tạo Carousel động dựa trên danh mục --- */
+    var indicatorsEl = $('#heroCarouselIndicators');
+    var innerEl = $('#heroCarouselInner');
+    if (indicatorsEl && innerEl) {
+      // Lọc các danh mục có sản phẩm, lấy tối đa 4 danh mục
+      var activeCats = data.categories.filter(function(c) { return c.count > 0; }).slice(0, 4);
+      
+      // Từ điển Marketing Copy map theo id danh mục
+      var marketingCopy = {
+        1: { head: 'Tem nhãn nhiệt in sắc nét, dán chắc', sub: 'Băng keo giấy dễ xé tay, tem nhãn vận chuyển khổ 4x6 và nhãn mã vạch tổng hợp — đáp ứng trọn khâu đóng gói và hậu cần.' },
+        2: { head: 'Dán thùng carton bền chắc, chịu nhiệt', sub: 'Băng keo OPP/BOPP keo acrylic gia cường, chống thấm nước, ít tiếng ồn khi xé — lựa chọn hàng đầu cho kho vận và nhà máy.' },
+        3: { head: 'Độ dính cao, bám tốt mọi bề mặt', sub: 'Từ băng keo lưới sợi thủy tinh gia cường đến gioăng cao su EVA — nhận sản xuất theo yêu cầu, in logo thương hiệu riêng.' }
+      };
+
+      var indicatorsHtml = '';
+      var innerHtml = '';
+
+      activeCats.forEach(function(c, i) {
+        var activeClass = i === 0 ? 'active' : '';
+        var ariaCurrent = i === 0 ? 'aria-current="true"' : '';
+        
+        indicatorsHtml += '<button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="' + i + '" ' +
+                          'class="' + activeClass + '" ' + ariaCurrent + ' aria-label="Slide ' + (i+1) + '"></button>';
+        
+        // Lấy 1 sản phẩm đại diện
+        var sample = data.products.filter(function(p) { return p.categoryId === c.id; })[0];
+        var imgSrc = sample && sample.image ? sample.image : FALLBACK_IMG;
+        
+        // Nội dung Marketing
+        var copy = marketingCopy[c.id] || {
+          head: 'Giải pháp ' + esc(c.name) + ' chất lượng cao',
+          sub: c.description ? esc(c.description) : 'Sản phẩm đạt tiêu chuẩn chất lượng cao, độ bám dính tốt, giá sỉ tận xưởng dành cho doanh nghiệp.'
+        };
+        
+        innerHtml += 
+          '<div class="carousel-item ' + activeClass + '" data-cat="' + c.id + '">' +
+            '<div class="hero-slide">' +
+              '<img class="slide-bg" src="' + esc(imgSrc) + '" alt="' + esc(c.name) + '" onerror="this.onerror=null;this.src=\'' + FALLBACK_IMG + '\'">' +
+              '<div class="container slide-content">' +
+                '<span class="badge rounded-pill bg-white bg-opacity-25 border border-white border-opacity-50 mb-3 text-uppercase">' +
+                  esc(c.name) +
+                '</span>' +
+                '<h2 class="mb-3">' + esc(copy.head) + '</h2>' +
+                '<p class="mb-4 opacity-75" style="max-width:480px">' + esc(copy.sub) + '</p>' +
+                '<div class="d-flex flex-wrap gap-2">' +
+                  '<a class="btn btn-primary rounded-pill px-4" href="products.html?cat=' + c.id + '">Xem sản phẩm</a>' +
+                  '<a class="btn btn-warning text-dark fw-bold rounded-pill px-4" href="contact.html">Nhận báo giá</a>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+      });
+
+      indicatorsEl.innerHTML = indicatorsHtml;
+      innerEl.innerHTML = innerHtml;
+    }
   }
 
   /* ======================================================================
@@ -870,7 +892,9 @@
         fullname:   form.elements.name.value.trim(),
         email:      form.elements.email.value.trim(),
         phone:      form.elements.phone.value.trim(),
+        company:    form.company.value.trim() || null,
         subject:    form.elements.subject.value,
+        quantity:   form.quantity.value.trim() || null,
         message:    form.elements.message.value.trim(),
         created_at: new Date().toISOString()
       };
@@ -910,14 +934,21 @@
    * ====================================================================== */
 
   function initFloatingWidgets() {
+    var phone = (window.__SETTINGS_MAP__ && window.__SETTINGS_MAP__.hotline1)
+      ? window.__SETTINGS_MAP__.hotline1.replace(/\s+/g, '')
+      : '02838123456';
+    var zalo = (window.__SETTINGS_MAP__ && window.__SETTINGS_MAP__.zalo_link)
+      ? window.__SETTINGS_MAP__.zalo_link
+      : 'https://zalo.me/0901234567';
+
     var div = document.createElement('div');
     div.className = 'floating-widget';
     div.innerHTML = 
-      '<a href="tel:02838123456" class="float-btn float-phone" aria-label="Gọi điện thoại">' +
+      '<a href="tel:' + phone + '" class="float-btn float-phone" aria-label="Gọi điện thoại" data-setting-href="hotline1" data-setting-prefix="tel:">' +
         '<i class="bi bi-telephone-fill"></i>' +
         '<span class="tooltip-text">Gọi Hotline</span>' +
       '</a>' +
-      '<a href="https://zalo.me/0901234567" target="_blank" class="float-btn float-zalo" aria-label="Chat Zalo">' +
+      '<a href="' + zalo + '" target="_blank" class="float-btn float-zalo" aria-label="Chat Zalo" data-setting-href="zalo_link">' +
         'Zalo' +
         '<span class="tooltip-text">Chat Zalo</span>' +
       '</a>';
@@ -985,10 +1016,8 @@
 
     loadData().then(function (data) {
       // Ghi ra Console để mở F12 là biết ngay trang đang đọc từ đâu
-      console.info(data.source === 'sqlite'
-        ? 'Dữ liệu đọc từ cơ sở dữ liệu ' + DB_URL + ' (' +
-          data.products.length + ' sản phẩm, ' + data.categories.length + ' danh mục).'
-        : 'Dữ liệu đọc từ bản dự phòng JSON — có thể không phải bản mới nhất.');
+      console.info('Dữ liệu tải từ Supabase (' +
+        data.products.length + ' sản phẩm, ' + data.categories.length + ' danh mục).');
 
       // Tra về sản phẩm theo id cho modal xem nhanh
       var byId = {};
@@ -1001,8 +1030,7 @@
       console.error('Lỗi nạp dữ liệu:', err);
       var msg = stateHTML(
         'Không tải được dữ liệu sản phẩm',
-        'Cả cơ sở dữ liệu VuGiaPhat.db lẫn bản dự phòng data/bangkeo.json đều không ' +
-        'đọc được. Hãy chạy trang qua HTTP (ví dụ: python -m http.server 8000).'
+        'Không thể nạp dữ liệu từ máy chủ Supabase. Vui lòng kiểm tra lại kết nối mạng.'
       );
       if (latestGrid)  latestGrid.innerHTML  = msg;
       if (productGrid) productGrid.innerHTML = msg;
