@@ -16,51 +16,7 @@
 
   <a class="skip-link" href="#main">Bỏ qua, đến nội dung chính</a>
 
-  <!-- ============================ HEADER ============================ -->
-  <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top z-3" style="box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-    <div class="container">
-
-      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-        <img src="images/logo.webp" alt="Logo VGP Win Win Tape">
-        <span class="d-flex flex-column">
-          <span class="brand-name">Vũ Gia Phát</span>
-          <span class="brand-tag">Win Win Tape</span>
-        </span>
-      </a>
-
-      <button class="navbar-toggler border-0" type="button"
-              data-bs-toggle="offcanvas" data-bs-target="#mainNav"
-              aria-controls="mainNav" aria-label="Mở menu">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <!-- Menu: thanh ngang trên desktop, ngăn kéo offcanvas trên mobile -->
-      <div class="offcanvas offcanvas-end" tabindex="-1" id="mainNav"
-           aria-labelledby="mainNavLabel">
-        <div class="offcanvas-header border-bottom">
-          <h5 class="offcanvas-title" id="mainNavLabel">Menu</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
-                  aria-label="Đóng"></button>
-        </div>
-
-        <div class="offcanvas-body">
-          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link" href="index.html">Trang chủ</a></li>
-            <li class="nav-item"><a class="nav-link" href="about.html">Giới thiệu</a></li>
-            <li class="nav-item"><a class="nav-link" href="products.html">Sản phẩm</a></li>
-            <li class="nav-item"><a class="nav-link" href="blog.html">Tin tức</a></li>
-            <li class="nav-item"><a class="nav-link" href="contact.html">Liên hệ</a></li>
-          </ul>
-
-          <a class="btn btn-primary rounded-pill d-inline-flex align-items-center gap-2"
-             href="tel:02838123456" data-setting-href="hotline1" data-setting-prefix="tel:">
-            <i class="bi bi-telephone-fill"></i><span data-setting-text="hotline1">028 3812 3456</span>
-          </a>
-        </div>
-      </div>
-
-    </div>
-  </nav>
+      <script src="js/header.js"></script>
 
   <main id="main">
     <div class="bg-primary text-white py-5 text-center">
@@ -147,74 +103,65 @@
     </div>
   </main>
 
-  <!-- ============================ FOOTER ============================ -->
-  <footer class="site-footer text-white-50 pt-5">
-    <div class="container">
-      <div class="row g-4 pb-4">
-
-        <div class="col-md-6 col-lg-3">
-          <div class="footer-brand d-flex align-items-center gap-2 mb-3">
-            <img src="images/logo.webp" alt="Logo VGP Win Win Tape">
-            <b class="text-white fs-5">Vũ Gia Phát</b>
+      <!-- ============================ FOOTER ============================ -->
+    <footer class="site-footer text-white pt-5" style="background-color: var(--brand);">
+      <div class="container">
+        <div class="row g-4 pb-4">
+  
+          <div class="col-md-6 col-lg-3">
+            <h4 class="text-white text-uppercase fs-6 mb-3 fw-bold">Contact Info</h4>
+            <ul class="list-unstyled small d-flex flex-column gap-3">
+              <li class="d-flex gap-2 align-items-center">
+                <i class="bi bi-telephone"></i>
+                <a href="tel:02838123456" class="text-white text-decoration-none" data-setting-href="hotline1" data-setting-prefix="tel:" data-setting-text="hotline1">028 3812 3456</a>
+              </li>
+              <li class="d-flex gap-2 align-items-center">
+                <i class="bi bi-envelope"></i>
+                <a href="mailto:info@vugiaphat.vn" class="text-white text-decoration-none" data-setting-href="email1" data-setting-prefix="mailto:" data-setting-text="email1">info@vugiaphat.vn</a>
+              </li>
+              <li class="d-flex gap-2 align-items-center">
+                <i class="bi bi-globe"></i>
+                <a href="#" class="text-white text-decoration-none">www.giaphat.com.vn</a>
+              </li>
+            </ul>
           </div>
-          <p class="small">
-            Chuyên sản xuất và phân phối băng keo công nghiệp phục vụ đóng gói,
-            kho vận và sản xuất. Cam kết đúng chất lượng, đúng tiến độ.
-          </p>
+  
+          <div class="col-md-6 col-lg-3">
+            <h4 class="text-white text-uppercase fs-6 mb-3 fw-bold">Address</h4>
+            <ul class="list-unstyled small d-flex flex-column gap-3">
+              <li class="d-flex gap-2">
+                <i class="bi bi-geo-alt mt-1"></i>
+                <span data-setting-text="address">123 Đuờng Tân Thới Hiệp, Quận 12, TP.HCM</span>
+              </li>
+            </ul>
+          </div>
+  
+          <div class="col-6 col-lg-3">
+            <h4 class="text-white text-uppercase fs-6 mb-3 fw-bold">Map</h4>
+            <ul class="list-unstyled small d-flex flex-column gap-2">
+              <li><a href="index.html" class="text-white text-decoration-none">Site map</a></li>
+              <li><a href="products.html" class="text-white text-decoration-none">Shopping</a></li>
+              <li><a href="contact.html" class="text-white text-decoration-none">Contact link</a></li>
+              <li><a href="blog.html" class="text-white text-decoration-none">Policy links</a></li>
+            </ul>
+          </div>
+  
+          <div class="col-6 col-lg-3">
+            <h4 class="text-white text-uppercase fs-6 mb-3 fw-bold">Policy</h4>
+            <ul class="list-unstyled small d-flex flex-column gap-2">
+              <li><a href="#" class="text-white text-decoration-none">Privacy policy</a></li>
+              <li><a href="#" class="text-white text-decoration-none">Terms policy</a></li>
+              <li><a href="#" class="text-white text-decoration-none">Terms of policy</a></li>
+            </ul>
+          </div>
+  
         </div>
-
-        <div class="col-6 col-lg-3">
-          <h4 class="text-white text-uppercase fs-6 mb-3">Danh mục</h4>
-          <ul class="list-unstyled small d-flex flex-column gap-2">
-            <li><a href="products.html?cat=1">Băng keo trong</a></li>
-            <li><a href="products.html?cat=2">Băng keo đục</a></li>
-            <li><a href="products.html?cat=3">Băng keo màu</a></li>
-            <li><a href="products.html?cat=4">Băng keo in logo</a></li>
-            <li><a href="products.html?cat=5">Màng PE quấn pallet</a></li>
-            <li><a href="products.html">Tất cả sản phẩm</a></li>
-          </ul>
+  
+        <div class="border-top border-light border-opacity-25 py-3 text-start small">
+          Copyright 2024 GIA PHÁT
         </div>
-
-        <div class="col-6 col-lg-3">
-          <h4 class="text-white text-uppercase fs-6 mb-3">Liên kết</h4>
-          <ul class="list-unstyled small d-flex flex-column gap-2">
-            <li><a href="index.html">Trang chủ</a></li>
-            <li><a href="about.html">Giới thiệu</a></li>
-            <li><a href="products.html">Sản phẩm</a></li>
-            <li><a href="blog.html">Tin tức</a></li>
-            <li><a href="contact.html">Liên hệ</a></li>
-          </ul>
-        </div>
-
-        <div class="col-md-6 col-lg-3">
-          <h4 class="text-white text-uppercase fs-6 mb-3">Liên hệ</h4>
-          <ul class="list-unstyled small d-flex flex-column gap-3">
-            <li class="d-flex gap-2">
-              <i class="bi bi-geo-alt mt-1"></i>
-              <span data-setting-text="address">123 Đường Tân Thới Hiệp, Phường Tân Thới Hiệp, Quận 12, TP.HCM</span>
-            </li>
-            <li class="d-flex gap-2">
-              <i class="bi bi-telephone mt-1"></i>
-              <a href="tel:02838123456" class="text-white-50 text-decoration-none" data-setting-href="hotline1" data-setting-prefix="tel:" data-setting-text="hotline1">028 3812 3456</a>
-            </li>
-            <li class="d-flex gap-2">
-              <i class="bi bi-envelope mt-1"></i>
-              <a href="mailto:info@vugiaphat.vn" class="text-white-50 text-decoration-none" data-setting-href="email1" data-setting-prefix="mailto:" data-setting-text="email1">info@vugiaphat.vn</a>
-            </li>
-            <li class="d-flex gap-2">
-              <i class="bi bi-clock mt-1"></i>
-              <span data-setting-text="hours1">Thứ 2 – Thứ 7: 8:00 – 17:30</span>
-            </li>
-          </ul>
-        </div>
-
       </div>
-
-      <div class="border-top border-secondary-subtle border-opacity-25 py-3 text-center small">
-        © 2026 BangKeo Vũ Gia Phát — VGP Win Win Tape.
-      </div>
-    </div>
-  </footer>
+    </footer>
 
   <button type="button" class="btn btn-primary to-top" aria-label="Lên đầu trang">
     <i class="bi bi-arrow-up"></i>

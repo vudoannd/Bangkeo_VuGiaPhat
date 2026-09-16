@@ -1,49 +1,90 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Chuyên trang chia sẻ kiến thức, cách phân biệt màng PE quấn hàng giá rẻ và kinh nghiệm chọn xưởng sản xuất băng keo đóng thùng uy tín.">
-  <title>Tin Tức & Kinh Nghiệm Mua Băng Keo Giá Sỉ - Vũ Gia Phát</title>
+  <meta name="description"
+    content="VGP Win Win Tape.Xưởng sản xuất băng keo đóng thùng, phân phối sỉ màng PE quấn hàng giá rẻ. Đảm bảo đúng chuẩn số yard và độ dày màng. Nhận sản xuất băng keo in logo.">
+  <title>Đang tải bài viết...</title>
   <link rel="icon" href="images/logo.webp" type="image/png">
 
+  <!-- Bootstrap 5 + Bootstrap Icons qua CDN -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Lớp tùy biến của website, phải nạp SAU Bootstrap để ghi đè được -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body data-page="blog">
+<body data-page="home">
 
   <a class="skip-link" href="#main">Bỏ qua, đến nội dung chính</a>
 
       <script src="js/header.js"></script>
 
-  <main id="main" class="bg-light pb-5 pt-4">
+  <main class="py-5" id="postMain">
       <div class="container">
-        <!-- Header -->
-        <div class="bg-white rounded shadow-sm p-5 text-center mb-5 border-top border-4" style="border-color: var(--brand) !important;">
-          <h1 class="display-5 fw-bold mb-3" style="color: var(--brand);">Cẩm nang & Tin tức</h1>
-          <p class="lead mb-0 text-muted">Tuyệt chiêu chọn băng keo và màng PE chuẩn xác, tiết kiệm chi phí cho doanh nghiệp</p>
-        </div>
-
-        <!-- SEO H1 Banner (Hidden by default, used for structure) -->
-        <h1 class="visually-hidden">Tổng hợp tin tức, kiến thức về băng keo và đóng gói</h1>
-
-        <!-- Blog Grid -->
-        <div class="row g-4" id="blogGrid">
-          <div class="col-12 text-center py-5">
-            <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Loading...</span>
-            </div>
-            <p class="mt-2 text-muted">Đang tải bài viết...</p>
+        <div class="row g-5">
+          
+          <!-- Cột Chính (Nội dung) -->
+          <div class="col-lg-8">
+            <article class="bg-white border rounded p-4 p-md-5 shadow-sm">
+              <h1 class="fw-bold mb-3" id="postTitle" style="color: var(--brand);">Đang tải bài viết...</h1>
+              <div class="d-flex gap-3 text-muted small mb-4 pb-3 border-bottom">
+                <span><i class="bi bi-calendar3 me-1"></i><span id="postDate">-</span></span>
+                <span><i class="bi bi-person me-1"></i>Vũ Gia Phát</span>
+              </div>
+              
+              <div class="ck-content" id="postContent" style="font-size: 1.1rem; line-height: 1.8;">
+                <div class="skeleton mb-2"></div>
+                <div class="skeleton mb-2"></div>
+                <div class="skeleton w-75"></div>
+              </div>
+            </article>
           </div>
+
+          <!-- Cột Sidebar -->
+          <div class="col-lg-4">
+            <div class="sticky-top" style="top: 2rem; z-index: 10;">
+              <!-- Mục lục bài viết -->
+              <div class="card border mb-4">
+                <div class="card-header bg-white fw-bold">Mục lục bài viết</div>
+                <div class="card-body">
+                  <ul class="list-unstyled small mb-0" id="tocList">
+                    <li class="text-muted fst-italic">Đang tạo mục lục...</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Danh mục sản phẩm -->
+              <div class="card border mb-4">
+                <div class="card-header bg-white fw-bold">Sản phẩm nổi bật</div>
+                <div class="card-body p-0">
+                  <div class="list-group list-group-flush small">
+                    <a href="products.html?cat=1" class="list-group-item list-group-item-action"><i class="bi bi-chevron-right me-2 text-brand"></i>Băng keo OPP Trong</a>
+                    <a href="products.html?cat=1" class="list-group-item list-group-item-action"><i class="bi bi-chevron-right me-2 text-brand"></i>Băng keo OPP Đục</a>
+                    <a href="products.html?cat=2" class="list-group-item list-group-item-action"><i class="bi bi-chevron-right me-2 text-brand"></i>Màng PE quấn máy</a>
+                    <a href="products.html?cat=2" class="list-group-item list-group-item-action"><i class="bi bi-chevron-right me-2 text-brand"></i>Màng PE quấn tay</a>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Liên hệ nhanh -->
+              <div class="card border bg-light text-center p-4">
+                <h5 class="fw-bold text-danger mb-3">Cần báo giá sỉ?</h5>
+                <p class="small text-muted">Liên hệ ngay với chuyên viên tư vấn của chúng tôi để nhận bảng giá tốt nhất.</p>
+                <a href="contact.html" class="btn btn-primary rounded-pill fw-bold"><i class="bi bi-telephone-fill me-2"></i>Liên hệ</a>
+              </div>
+            </div>
+          </div>
+          
         </div>
       </div>
     </main>
-    <script src="js/blog.js"></script>
+    <script src="js/seo.js"></script>
+    <script src="js/post.js"></script>
 
-
-      <!-- ============================ FOOTER ============================ -->
+<!-- ============================ FOOTER ============================ -->
     <footer class="site-footer text-white pt-5" style="background-color: var(--brand);">
       <div class="container">
         <div class="row g-4 pb-4">
@@ -103,13 +144,21 @@
       </div>
     </footer>
 
+  
+  </div>
+
   <button type="button" class="btn btn-primary to-top" aria-label="Lên đầu trang">
     <i class="bi bi-arrow-up"></i>
   </button>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Supabase JS Client & Cấu hình -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
+
+  <!-- Bản nhúng dự phòng cuối cùng: dùng khi mở trang bằng file:// (CORS chặn fetch) -->
+
   <script src="js/main.js"></script>
 </body>
+
 </html>

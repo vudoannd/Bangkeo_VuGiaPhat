@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="VGP Win Win Tape.Xưởng sản xuất băng keo đóng thùng, phân phối sỉ màng PE quấn hàng giá rẻ. Đảm bảo đúng chuẩn số yard và độ dày màng. Nhận sản xuất băng keo in logo.">
+  <meta name="description"
+    content="VGP Win Win Tape.Xưởng sản xuất băng keo đóng thùng, phân phối sỉ màng PE quấn hàng giá rẻ. Đảm bảo đúng chuẩn số yard và độ dày màng. Nhận sản xuất băng keo in logo.">
   <title>Nhà Cung Cấp Băng Keo Giá Sỉ & Màng PE Quấn Hàng Giá Rẻ - Vũ Gia Phát</title>
   <link rel="icon" href="images/logo.webp" type="image/png">
 
@@ -18,135 +20,88 @@
 
   <a class="skip-link" href="#main">Bỏ qua, đến nội dung chính</a>
 
-  <!-- ============================ HEADER ============================ -->
-  <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
-    <div class="container">
-
-      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-        <img src="images/logo.webp" alt="Logo VGP Win Win Tape">
-        <span class="d-flex flex-column">
-          <span class="brand-name">Vũ Gia Phát</span>
-          <span class="brand-tag">Win Win Tape</span>
-        </span>
-      </a>
-
-      <button class="navbar-toggler border-0" type="button"
-              data-bs-toggle="offcanvas" data-bs-target="#mainNav"
-              aria-controls="mainNav" aria-label="Mở menu">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <!-- Menu: thanh ngang trên desktop, ngăn kéo offcanvas trên mobile -->
-      <div class="offcanvas offcanvas-end" tabindex="-1" id="mainNav"
-           aria-labelledby="mainNavLabel">
-        <div class="offcanvas-header border-bottom">
-          <h5 class="offcanvas-title" id="mainNavLabel">Menu</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
-                  aria-label="Đóng"></button>
-        </div>
-
-        <div class="offcanvas-body">
-          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link" href="index.html">Trang chủ</a></li>
-            <li class="nav-item"><a class="nav-link" href="about.html">Giới thiệu</a></li>
-            <li class="nav-item"><a class="nav-link" href="products.html">Sản phẩm</a></li>
-            <li class="nav-item"><a class="nav-link" href="blog.html">Tin tức</a></li>
-            <li class="nav-item"><a class="nav-link" href="contact.html">Liên hệ</a></li>
-          </ul>
-
-          <a class="btn btn-primary rounded-pill d-inline-flex align-items-center gap-2"
-             href="tel:02838123456" data-setting-href="hotline1" data-setting-prefix="tel:">
-            <i class="bi bi-telephone-fill"></i><span data-setting-text="hotline1">028 3812 3456</span>
-          </a>
-        </div>
-      </div>
-
-    </div>
-  </nav>
+  <script src="js/header.js"></script>
 
   <main id="main">
 
-    <!-- ========================== CAROUSEL ========================== -->
-    <!-- Component Carousel của Bootstrap: tự chạy, dừng khi rê chuột,
-         hỗ trợ vuốt ngang trên mobile và phím mũi tên. -->
-    <section id="heroCarousel" class="carousel slide hero-carousel"
-             data-bs-ride="carousel" data-bs-interval="5000" data-bs-touch="true">
+    <!-- ========================== HERO CAROUSEL ========================== -->
+    <!-- Slides tĩnh bên dưới là fallback: hiển thị ngay khi trang load.
+         main.js sẽ ghi đè bằng dữ liệu từ Supabase (bảng carousel_slide)
+         hoặc dùng đúng dữ liệu danh mục sau khi kết nối xong. -->
+    <section id="heroCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel" data-bs-interval="5000"
+      data-bs-touch="true">
 
-      <div class="carousel-indicators">
-        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0"
-                class="active" aria-current="true" aria-label="Slide 1"></button>
-        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"
-                aria-label="Slide 2"></button>
-        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"
-                aria-label="Slide 3"></button>
+
+      <div class="carousel-indicators" id="heroCarouselIndicators">
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true"
+          aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
       </div>
 
-      <div class="carousel-inner">
+      <div class="carousel-inner" id="heroCarouselInner">
 
-        <!-- Ảnh nền của mỗi slide do main.js gán, lấy từ chính dữ liệu sản phẩm -->
+        <!-- Slide 1: Băng keo trong / tem nhãn (cat=1) -->
         <div class="carousel-item active" data-cat="1">
           <div class="hero-slide">
-            <img class="slide-bg" src="" alt="">
+            <img class="slide-bg" src="" alt="Băng keo trong" onerror="this.onerror=null;">
             <div class="container slide-content">
-              <span class="badge rounded-pill bg-white bg-opacity-25 border
-                           border-white border-opacity-50 mb-3 text-uppercase">
-                Băng keo giấy &amp; tem nhãn
+              <span
+                class="badge rounded-pill bg-white bg-opacity-25 border border-white border-opacity-50 mb-3 text-uppercase">
+                Băng keo trong &amp; tem nhãn
               </span>
               <h2 class="mb-3">Tem nhãn nhiệt in sắc nét, dán chắc</h2>
               <p class="mb-4 opacity-75" style="max-width:480px">
-                Băng keo giấy dễ xé tay, tem nhãn vận chuyển khổ 4x6 và nhãn mã vạch
-                tổng hợp — đáp ứng trọn khâu đóng gói và hậu cần.
+                Băng keo OPP trong suốt, tem nhãn vận chuyển khổ 4×6 và nhãn mã vạch — đáp ứng trọn khâu đóng gói và hậu
+                cần.
               </p>
               <div class="d-flex flex-wrap gap-2">
-                <a class="btn btn-primary rounded-pill px-4" href="products.html?cat=1">
-                  Xem sản phẩm</a>
-                <a class="btn btn-outline-light rounded-pill px-4" href="contact.html">
-                  Nhận báo giá</a>
+                <a class="btn btn-primary rounded-pill px-4" href="products.html?cat=1">Xem sản phẩm</a>
+                <a class="btn btn-warning text-dark fw-bold rounded-pill px-4" href="contact.html">Nhận báo giá</a>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- Slide 2: Băng keo đục / BOPP (cat=2) -->
         <div class="carousel-item" data-cat="2">
           <div class="hero-slide">
-            <img class="slide-bg" src="" alt="">
+            <img class="slide-bg" src="" alt="Băng keo đục" onerror="this.onerror=null;">
             <div class="container slide-content">
-              <span class="badge rounded-pill bg-white bg-opacity-25 border
-                           border-white border-opacity-50 mb-3 text-uppercase">
+              <span
+                class="badge rounded-pill bg-white bg-opacity-25 border border-white border-opacity-50 mb-3 text-uppercase">
                 Keo acrylic cao cấp
               </span>
               <h2 class="mb-3">Dán thùng carton bền chắc, chịu nhiệt</h2>
               <p class="mb-4 opacity-75" style="max-width:480px">
-                Băng keo OPP/BOPP keo acrylic gia cường, chống thấm nước, ít tiếng ồn
-                khi xé — lựa chọn hàng đầu cho kho vận và nhà máy.
+                Băng keo OPP/BOPP keo acrylic gia cường, chống thấm nước, ít tiếng ồn khi xé — lựa chọn hàng đầu cho kho
+                vận và nhà máy.
               </p>
               <div class="d-flex flex-wrap gap-2">
-                <a class="btn btn-primary rounded-pill px-4" href="products.html?cat=2">
-                  Xem sản phẩm</a>
-                <a class="btn btn-outline-light rounded-pill px-4" href="contact.html">
-                  Nhận báo giá</a>
+                <a class="btn btn-primary rounded-pill px-4" href="products.html?cat=2">Xem sản phẩm</a>
+                <a class="btn btn-warning text-dark fw-bold rounded-pill px-4" href="contact.html">Nhận báo giá</a>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- Slide 3: Màng PE quấn pallet (cat=5) -->
         <div class="carousel-item" data-cat="5">
           <div class="hero-slide">
-            <img class="slide-bg" src="" alt="">
+            <img class="slide-bg" src="" alt="Màng PE quấn pallet" onerror="this.onerror=null;">
             <div class="container slide-content">
-              <span class="badge rounded-pill bg-white bg-opacity-25 border
-                           border-white border-opacity-50 mb-3 text-uppercase">
+              <span
+                class="badge rounded-pill bg-white bg-opacity-25 border border-white border-opacity-50 mb-3 text-uppercase">
                 Màng PE (Màng chít)
               </span>
               <h2 class="mb-3">Siêu dai, co giãn tốt, bảo vệ tối ưu</h2>
               <p class="mb-4 opacity-75" style="max-width:480px">
-                Màng PE quấn pallet với độ co giãn lên đến 350%, bám dính siêu chắc giúp cố định hàng hóa, chống bụi bẩn, chống thấm nước hoàn hảo cho kho vận.
+                Màng PE quấn pallet với độ co giãn lên đến 350%, bám dính siêu chắc giúp cố định hàng hóa, chống bụi
+                bẩn, chống thấm nước hoàn hảo cho kho vận.
               </p>
               <div class="d-flex flex-wrap gap-2">
-                <a class="btn btn-primary rounded-pill px-4" href="products.html?cat=5">
-                  Xem sản phẩm</a>
-                <a class="btn btn-warning text-dark fw-bold rounded-pill px-4" href="contact.html">
-                  Nhận báo giá</a>
+                <a class="btn btn-primary rounded-pill px-4" href="products.html?cat=5">Xem sản phẩm</a>
+                <a class="btn btn-warning text-dark fw-bold rounded-pill px-4" href="contact.html">Nhận báo giá</a>
               </div>
             </div>
           </div>
@@ -154,40 +109,73 @@
 
       </div>
 
-      <button class="carousel-control-prev" type="button"
-              data-bs-target="#heroCarousel" data-bs-slide="prev">
+      <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Slide trước</span>
       </button>
-      <button class="carousel-control-next" type="button"
-              data-bs-target="#heroCarousel" data-bs-slide="next">
+      <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Slide kế tiếp</span>
       </button>
     </section>
 
-    <!-- ========================= DANH MỤC ========================== -->
-    <section class="py-5">
-      <div class="container">
-        <div class="section-head text-center mb-5 reveal">
-          <h2>Danh mục <span class="text-brand">sản phẩm</span></h2>
-          <p class="text-body-secondary mt-2 mb-0">
-            Các dòng sản phẩm băng keo và màng PE chủ lực, đáp ứng mọi nhu cầu đóng gói, bảo vệ hàng hóa của bạn.
-          </p>
-        </div>
 
+    <!-- ========================= DANH MỤC ========================== -->
+    <section class="py-5 bg-white">
+      <div class="container">
+        <div class="section-head text-center mb-4 reveal">
+          <h2 class="text-uppercase fw-bold">Khám phá <span class="text-brand">Danh mục</span></h2>
+          <p class="text-body-secondary mt-2 mb-0">Các dòng sản phẩm chuyên dụng phục vụ mọi nhu cầu đóng gói.</p>
+        </div>
         <!-- main.js đổ dữ liệu vào đây -->
         <div class="row g-4" id="catGrid"></div>
+        <div class="text-center mt-5 reveal" id="catGridMore" style="display: none;">
+          <a href="products.html" class="btn btn-outline-primary rounded-pill px-4 fw-semibold"
+            style="border-color: var(--brand); color: var(--brand);">Xem tất cả danh mục</a>
+        </div>
       </div>
     </section>
 
-    <!-- ==================== SẢN PHẨM MỚI NHẤT ===================== -->
-    <section class="py-5 bg-brand-lighter">
+    <!-- ==================== TẠI SAO CHỌN GIA PHÁT ===================== -->
+    <section class="py-5 bg-light mt-5">
+      <div class="container">
+        <h2 class="text-center fs-4 fw-bold mb-5 text-uppercase">Tại sao chọn Gia Phát?</h2>
+        <div class="row text-center g-4">
+          <div class="col-6 col-md-4 col-lg-2">
+            <i class="bi bi-building fs-1 text-danger mb-2"></i>
+            <div class="fw-bold small">Xưởng SX<br>trực tiếp</div>
+          </div>
+          <div class="col-6 col-md-4 col-lg-2">
+            <i class="bi bi-tags fs-1 text-danger mb-2"></i>
+            <div class="fw-bold small">Bán lẻ<br>giá sỉ</div>
+          </div>
+          <div class="col-6 col-md-4 col-lg-2">
+            <i class="bi bi-gift fs-1 text-danger mb-2"></i>
+            <div class="fw-bold small">Freeship<br>đơn từ 500k</div>
+          </div>
+          <div class="col-6 col-md-4 col-lg-2">
+            <i class="bi bi-lightning-charge fs-1 text-danger mb-2"></i>
+            <div class="fw-bold small">Giao siêu tốc<br>2H nội thành</div>
+          </div>
+          <div class="col-6 col-md-4 col-lg-2">
+            <i class="bi bi-boxes fs-1 text-danger mb-2"></i>
+            <div class="fw-bold small">Kho hàng<br>>5000m²</div>
+          </div>
+          <div class="col-6 col-md-4 col-lg-2">
+            <i class="bi bi-percent fs-1 text-danger mb-2"></i>
+            <div class="fw-bold small">Chiết khấu cao<br>(Khách sỉ)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SẢN PHẨM BÁN CHẠY ===================== -->
+    <section class="py-5">
       <div class="container">
         <div class="section-head text-center mb-5 reveal">
-          <h2>Sản phẩm <span class="text-brand">mới nhất</span></h2>
+          <h2 class="text-uppercase fw-bold">Sản phẩm <span class="text-brand">Bán chạy</span></h2>
           <p class="text-body-secondary mt-2 mb-0">
-            Những mẫu băng keo vừa được bổ sung vào kho. Rê chuột vào sản phẩm
+            Danh sách các mẫu băng keo được yêu thích và đặt mua nhiều nhất. Rê chuột vào sản phẩm
             để xem nhanh thông số chi tiết.
           </p>
         </div>
@@ -208,8 +196,7 @@
         <div class="section-head text-center mb-5 reveal">
           <h2>Vì sao chọn <span class="text-brand">Vũ Gia Phát</span></h2>
           <p class="text-body-secondary mt-2 mb-0">
-            Hơn một thập kỷ đồng hành cùng các nhà máy, kho vận và doanh nghiệp
-            thương mại điện tử trên cả nước.
+            Hơn một thập kỷ đồng hành cùng hàng triệu khách mua lẻ và các doanh nghiệp trên cả nước.
           </p>
         </div>
 
@@ -217,27 +204,28 @@
           <div class="col-6 col-lg-3">
             <article class="card h-100 border text-center p-4 feature-card reveal" data-delay="0">
               <span class="feature-icon mb-3"><i class="bi bi-truck"></i></span>
-              <h3 class="h6">Giao hàng toàn quốc</h3>
+              <h3 class="h6">Giao hàng linh hoạt</h3>
               <p class="small text-body-secondary mb-0">
-                Nội thành TP.HCM giao trong 24 giờ, các tỉnh 2–4 ngày làm việc.</p>
+                Giao Hỏa Tốc trong 2H nội thành TP.HCM, và hỗ trợ giao nhanh qua GHTK, Shopee Express toàn quốc.</p>
             </article>
           </div>
 
           <div class="col-6 col-lg-3">
             <article class="card h-100 border text-center p-4 feature-card reveal" data-delay="1">
-              <span class="feature-icon mb-3"><i class="bi bi-shield-check"></i></span>
-              <h3 class="h6">Chất lượng đạt chuẩn</h3>
+              <span class="feature-icon mb-3"><i class="bi bi-box-seam"></i></span>
+              <h3 class="h6">Đóng gói an toàn</h3>
               <p class="small text-body-secondary mb-0">
-                Sản phẩm có chứng nhận ROHS, MSDS — kiểm tra độ dính từng lô hàng.</p>
+                Mọi đơn hàng lẻ đều được bọc màng chống sốc cẩn thận, đảm bảo băng keo không bị móp méo khi vận chuyển.
+              </p>
             </article>
           </div>
 
           <div class="col-6 col-lg-3">
             <article class="card h-100 border text-center p-4 feature-card reveal" data-delay="2">
-              <span class="feature-icon mb-3"><i class="bi bi-brush"></i></span>
-              <h3 class="h6">In logo theo yêu cầu</h3>
+              <span class="feature-icon mb-3"><i class="bi bi-arrow-repeat"></i></span>
+              <h3 class="h6">Đổi trả dễ dàng</h3>
               <p class="small text-body-secondary mb-0">
-                Nhận in thương hiệu riêng lên băng keo, tối thiểu từ 100 cuộn.</p>
+                Hỗ trợ đổi trả miễn phí trong 7 ngày nếu lỗi từ nhà sản xuất hoặc thiếu số yard cam kết.</p>
             </article>
           </div>
 
@@ -246,7 +234,7 @@
               <span class="feature-icon mb-3"><i class="bi bi-chat-dots"></i></span>
               <h3 class="h6">Tư vấn tận tình</h3>
               <p class="small text-body-secondary mb-0">
-                Đội ngũ kỹ thuật hỗ trợ chọn đúng loại keo cho từng bề mặt vật liệu.</p>
+                Đội ngũ chuyên viên tư vấn khách lẻ chọn đúng loại keo theo nhu cầu sử dụng đóng hàng hằng ngày.</p>
             </article>
           </div>
         </div>
@@ -280,83 +268,74 @@
   </main>
 
   <!-- ============================ FOOTER ============================ -->
-  <footer class="site-footer text-white-50 pt-5">
+  <footer class="site-footer text-white pt-5" style="background-color: var(--brand);">
     <div class="container">
       <div class="row g-4 pb-4">
 
         <div class="col-md-6 col-lg-3">
-          <div class="footer-brand d-flex align-items-center gap-2 mb-3">
-            <img src="images/logo.webp" alt="Logo VGP Win Win Tape">
-            <b class="text-white fs-5">Vũ Gia Phát</b>
-          </div>
-          <p class="small">
-            Chuyên sản xuất và phân phối băng keo công nghiệp phục vụ đóng gói,
-            kho vận và sản xuất. Cam kết đúng chất lượng, đúng tiến độ.
-          </p>
-        </div>
-
-        <div class="col-6 col-lg-3">
-          <h4 class="text-white text-uppercase fs-6 mb-3">Danh mục</h4>
-          <ul class="list-unstyled small d-flex flex-column gap-2">
-            <li><a href="products.html?cat=1">Băng keo trong</a></li>
-            <li><a href="products.html?cat=2">Băng keo đục</a></li>
-            <li><a href="products.html?cat=3">Băng keo màu</a></li>
-            <li><a href="products.html?cat=4">Băng keo in logo</a></li>
-            <li><a href="products.html?cat=5">Màng PE quấn pallet</a></li>
-            <li><a href="products.html">Tất cả sản phẩm</a></li>
-          </ul>
-        </div>
-
-        <div class="col-6 col-lg-3">
-          <h4 class="text-white text-uppercase fs-6 mb-3">Liên kết</h4>
-          <ul class="list-unstyled small d-flex flex-column gap-2">
-            <li><a href="index.html">Trang chủ</a></li>
-            <li><a href="about.html">Giới thiệu</a></li>
-            <li><a href="products.html">Sản phẩm</a></li>
-            <li><a href="blog.html">Tin tức</a></li>
-            <li><a href="contact.html">Liên hệ</a></li>
+          <h4 class="text-white text-uppercase fs-6 mb-3 fw-bold">Contact Info</h4>
+          <ul class="list-unstyled small d-flex flex-column gap-3">
+            <li class="d-flex gap-2 align-items-center">
+              <i class="bi bi-telephone"></i>
+              <a href="tel:02838123456" class="text-white text-decoration-none" data-setting-href="hotline1"
+                data-setting-prefix="tel:" data-setting-text="hotline1">028 3812 3456</a>
+            </li>
+            <li class="d-flex gap-2 align-items-center">
+              <i class="bi bi-envelope"></i>
+              <a href="mailto:info@vugiaphat.vn" class="text-white text-decoration-none" data-setting-href="email1"
+                data-setting-prefix="mailto:" data-setting-text="email1">info@vugiaphat.vn</a>
+            </li>
+            <li class="d-flex gap-2 align-items-center">
+              <i class="bi bi-globe"></i>
+              <a href="#" class="text-white text-decoration-none">www.giaphat.com.vn</a>
+            </li>
           </ul>
         </div>
 
         <div class="col-md-6 col-lg-3">
-          <h4 class="text-white text-uppercase fs-6 mb-3">Liên hệ</h4>
+          <h4 class="text-white text-uppercase fs-6 mb-3 fw-bold">Address</h4>
           <ul class="list-unstyled small d-flex flex-column gap-3">
             <li class="d-flex gap-2">
               <i class="bi bi-geo-alt mt-1"></i>
-              <span data-setting-text="address">123 Đường Tân Thới Hiệp, Phường Tân Thới Hiệp, Quận 12, TP.HCM</span>
+              <span data-setting-text="address">123 Đuờng Tân Thới Hiệp, Quận 12, TP.HCM</span>
             </li>
-            <li class="d-flex gap-2">
-              <i class="bi bi-telephone mt-1"></i>
-              <a href="tel:02838123456" class="text-white-50 text-decoration-none" data-setting-href="hotline1" data-setting-prefix="tel:" data-setting-text="hotline1">028 3812 3456</a>
-            </li>
-            <li class="d-flex gap-2">
-              <i class="bi bi-envelope mt-1"></i>
-              <a href="mailto:info@vugiaphat.vn" class="text-white-50 text-decoration-none" data-setting-href="email1" data-setting-prefix="mailto:" data-setting-text="email1">info@vugiaphat.vn</a>
-            </li>
-            <li class="d-flex gap-2">
-              <i class="bi bi-clock mt-1"></i>
-              <span data-setting-text="hours1">Thứ 2 – Thứ 7: 8:00 – 17:30</span>
-            </li>
+          </ul>
+        </div>
+
+        <div class="col-6 col-lg-3">
+          <h4 class="text-white text-uppercase fs-6 mb-3 fw-bold">Map</h4>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="index.html" class="text-white text-decoration-none">Site map</a></li>
+            <li><a href="products.html" class="text-white text-decoration-none">Shopping</a></li>
+            <li><a href="contact.html" class="text-white text-decoration-none">Contact link</a></li>
+            <li><a href="blog.html" class="text-white text-decoration-none">Policy links</a></li>
+          </ul>
+        </div>
+
+        <div class="col-6 col-lg-3">
+          <h4 class="text-white text-uppercase fs-6 mb-3 fw-bold">Policy</h4>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="#" class="text-white text-decoration-none">Privacy policy</a></li>
+            <li><a href="#" class="text-white text-decoration-none">Terms policy</a></li>
+            <li><a href="#" class="text-white text-decoration-none">Terms of policy</a></li>
           </ul>
         </div>
 
       </div>
 
-      <div class="border-top border-secondary-subtle border-opacity-25 py-3 text-center small">
-        © 2026 BangKeo Vũ Gia Phát — VGP Win Win Tape.
+      <div class="border-top border-light border-opacity-25 py-3 text-start small">
+        Copyright 2024 VŨ GIA PHÁT
       </div>
     </div>
   </footer>
 
   <!-- Modal xem nhanh sản phẩm — nội dung do main.js đổ vào -->
-  <div class="modal fade" id="quickViewModal" tabindex="-1"
-       aria-labelledby="quickViewLabel" aria-hidden="true">
+  <div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title fs-6" id="quickViewLabel">Chi tiết sản phẩm</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"
-                  aria-label="Đóng"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
         </div>
         <div class="modal-body" id="quickViewBody"></div>
       </div>
@@ -373,7 +352,8 @@
   <script src="js/supabase-config.js"></script>
 
   <!-- Bản nhúng dự phòng cuối cùng: dùng khi mở trang bằng file:// (CORS chặn fetch) -->
-  
+
   <script src="js/main.js"></script>
 </body>
+
 </html>

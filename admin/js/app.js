@@ -34,9 +34,10 @@
      Viết cứng ở đây chứ không suy ra từ thứ tự đăng ký, để đổi vị trí một
      mục thì sửa đúng một chỗ. */
   var NAV = [
-    { group: '',            items: ['dashboard'] },
-    { group: 'Bán hàng',    items: ['orders', 'products', 'categories'] },
-    { group: 'Người dùng',  items: ['users', 'feedback'] },
+    { group: '',           items: ['dashboard'] },
+    { group: 'Nội dung',   items: ['carousel'] },
+    { group: 'Bán hàng',   items: ['orders', 'products', 'categories'] },
+    { group: 'Người dùng', items: ['users', 'feedback'] },
     ];
 
   var DEFAULT_PAGE = 'dashboard';
