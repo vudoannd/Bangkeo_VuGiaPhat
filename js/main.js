@@ -110,10 +110,10 @@
     }
 
     // Promise.all giúp lấy danh mục và sản phẩm cùng lúc song song để tải trang nhanh hơn
-    return Promise.all([
-      supabaseClient.from('category').select('*').order('id'),
-      supabaseClient.from('product').select('*').order('id')
-    ]).then(function (results) {
+      return Promise.all([
+        supabaseClient.from('category').select('*').order('id'),
+        supabaseClient.from('product').select('*').neq('is_hidden', true).order('id')
+      ]).then(function (results) {
       var catRes = results[0];
       var prodRes = results[1];
 
@@ -1396,6 +1396,89 @@
     });
   }
 
+  function initNewsBoard() {
+    if (typeof supabaseClient === 'undefined') return;
+    
+    supabaseClient
+      .from('notices')
+      .select('*')
+      .eq('is_active', true)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .then(function(res) {
+        if (res.error) {
+          console.error('Lỗi nạp thông báo:', res.error);
+          return;
+        }
+        
+        var notice = res.data && res.data.length > 0 ? res.data[0] : null;
+        if (!notice) return;
+        
+        var modalEl = $('#newsBoardModal');
+        if (!modalEl) {
+          var modalHtml = 
+            '<div class="modal fade" id="newsBoardModal" tabindex="-1" aria-labelledby="newsBoardLabel" aria-hidden="true">' +
+              '<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">' +
+                '<div class="modal-content border-0 shadow-lg">' +
+                  '<div class="modal-header bg-brand-gradient text-white border-0">' +
+                    '<h5 class="modal-title fs-5 fw-bold" id="newsBoardLabel">' +
+                      '<i class="bi bi-megaphone-fill me-2 text-warning"></i>Thông báo từ VGP' +
+                    '</h5>' +
+                    '<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>' +
+                  '</div>' +
+                  '<div class="modal-body p-4" id="newsBoardBody"></div>' +
+                  '<div class="modal-footer border-0 pt-0 pb-4 px-4 justify-content-center">' +
+                    '<button type="button" class="btn btn-primary rounded-pill px-5" data-bs-dismiss="modal">Đã hiểu</button>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
+          document.body.insertAdjacentHTML('beforeend', modalHtml);
+          modalEl = $('#newsBoardModal');
+        }
+        
+        var readNotices = [];
+        try {
+          readNotices = JSON.parse(localStorage.getItem('vgp_read_notices')) || [];
+        } catch(e) {}
+        
+        var isUnread = readNotices.indexOf(notice.id) === -1;
+        var btnNotice = $('#btnNotice');
+        var noticeBadge = $('#noticeBadge');
+        
+        var bodyEl = $('#newsBoardBody', modalEl);
+        if (bodyEl) {
+          var html = '<h4 class="mb-3 text-primary fw-bold">' + esc(notice.title) + '</h4>';
+          if (notice.content) html += '<div class="notice-content">' + notice.content + '</div>';
+          bodyEl.innerHTML = html;
+        }
+        
+        var bsModal = new bootstrap.Modal(modalEl);
+        
+        if (btnNotice) {
+          if (isUnread && noticeBadge) noticeBadge.classList.remove('d-none');
+          btnNotice.addEventListener('click', function(e) {
+            e.preventDefault();
+            bsModal.show();
+          });
+        }
+        
+        var page = document.body.getAttribute('data-page');
+        if (page === 'home' && isUnread) {
+          bsModal.show();
+        }
+        
+        modalEl.addEventListener('hidden.bs.modal', function () {
+          if (noticeBadge) noticeBadge.classList.add('d-none');
+          if (readNotices.indexOf(notice.id) === -1) {
+            readNotices.push(notice.id);
+            if (readNotices.length > 20) readNotices.shift();
+            localStorage.setItem('vgp_read_notices', JSON.stringify(readNotices));
+          }
+        });
+      });
+  }
+
   function boot() {
     CartManager.init();
     var page = document.body.getAttribute('data-page') || '';
@@ -1405,6 +1488,7 @@
     initReveal();
     initFloatingWidgets();
     loadSettings();
+    initNewsBoard();
 
     // Trang liên hệ không cần dữ liệu sản phẩm cho body, nhưng cần cho Mega Menu
     if (page === 'contact') {
@@ -1454,6 +1538,16 @@
   /* ======================================================================
    * TRANG GIỎ HÀNG (cart.html)
    * ====================================================================== */
+  function escapeHtml(text) {
+    if (text === null || text === undefined) return '';
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   function initCartPage(data) {
     var container = $('#cartItemsContainer');
     var form = $('#checkoutForm');
@@ -1485,11 +1579,7 @@
         if (price === 0) hasZeroPrice = true;
         total += price * item.quantity;
         
-        var imgUrl = 'images/placeholder.webp';
-        try {
-          if (product.images) imgUrl = JSON.parse(product.images)[0] || imgUrl;
-        } catch(e){}
-        if (imgUrl.indexOf('http') !== 0) imgUrl = window.VGP_IMAGES + imgUrl;
+        var imgUrl = product.image || 'images/placeholder.webp';
 
         html += '<li class="list-group-item py-3 px-0 d-flex align-items-center gap-3 border-bottom">';
         html += '<img src="' + imgUrl + '" class="rounded border" style="width: 70px; height: 70px; object-fit: cover;">';

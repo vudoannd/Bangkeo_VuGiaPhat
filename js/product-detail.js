@@ -109,8 +109,8 @@
 
     supabaseClient.from('product').select('*').eq('id', productId).single()
       .then(function(res) {
-        if (res.error || !res.data) {
-          document.getElementById('productDetailContainer').innerHTML = '<div class="alert alert-danger">Không tìm thấy sản phẩm.</div>';
+        if (res.error || !res.data || res.data.is_hidden === true) {
+          document.getElementById('productDetailContainer').innerHTML = '<div class="alert alert-danger">Sản phẩm không tìm thấy hoặc đã ngừng kinh doanh.</div>';
           return;
         }
         var p = res.data;

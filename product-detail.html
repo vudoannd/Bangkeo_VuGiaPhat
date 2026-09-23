@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body data-page="home">
+<body data-page="product-detail">
 
   <a class="skip-link" href="#main">Bỏ qua, đến nội dung chính</a>
 
@@ -24,6 +24,13 @@
 
   <main class="py-5" id="productDetailMain">
     <div class="container">
+      <nav aria-label="Đường dẫn">
+        <ol class="breadcrumb small mb-4">
+          <li class="breadcrumb-item"><a class="link-dark text-decoration-none" href="index.html">Trang chủ</a></li>
+          <li class="breadcrumb-item"><a class="link-dark text-decoration-none" href="products.html">Sản phẩm</a></li>
+          <li class="breadcrumb-item active text-brand fw-medium" aria-current="page" id="bcProductName">Đang tải...</li>
+        </ol>
+      </nav>
       <div class="row g-5" id="productDetailContainer">
 
         <!-- Trái: Gallery -->

@@ -35,7 +35,7 @@
      mục thì sửa đúng một chỗ. */
   var NAV = [
     { group: '',           items: ['dashboard'] },
-    { group: 'Nội dung',   items: ['carousel'] },
+    { group: 'Nội dung',   items: ['carousel', 'notices'] },
     { group: 'Bán hàng',   items: ['orders', 'products', 'categories'] },
     { group: 'Người dùng', items: ['users', 'feedback'] },
     ];

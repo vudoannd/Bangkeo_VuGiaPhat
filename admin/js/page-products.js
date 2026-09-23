@@ -194,16 +194,16 @@
         '<th>Đặt tối thiểu</th>' +
         '<th class="num">Đánh giá</th>' +
         '<th>Kho</th>' +
-        '<th style="width:96px" class="text-end">Thao tác</th>' +
+        '<th style="width:120px" class="text-end">Thao tác</th>' +
       '</tr></thead><tbody>' +
       rows.map(function (p) {
-        return '<tr data-id="' + p.id + '">' +
+        return '<tr data-id="' + p.id + '"' + (p.is_hidden ? ' style="opacity:0.6"' : '') + '>' +
           '<td><input type="checkbox" class="form-check-input" data-pick="' + p.id + '"' +
              (picked[p.id] ? ' checked' : '') + ' aria-label="Chọn sản phẩm ' + p.id + '"></td>' +
           '<td>' + U.imgTag(p.image, 'thumb', p.name) + '</td>' +
           '<td style="min-width:260px;max-width:420px">' +
             '<div class="clamp-2 fw-semibold fs-13" title="' + esc(p.name) + '">' +
-              esc(p.name) + '</div>' +
+              esc(p.name) + (p.is_hidden ? ' <span class="badge bg-secondary-subtle text-secondary ms-1">Đã ẩn</span>' : '') + '</div>' +
             '<div class="fs-12 text-ink-3">Mã #' + p.id +
               (p.order_lines ? ' · đã bán trong ' + p.order_lines + ' đơn' : '') + '</div>' +
           '</td>' +
@@ -221,6 +221,8 @@
               : '<span class="badge bg-danger-subtle text-danger-emphasis border border-danger-subtle">Hết hàng</span>') +
           '</td>' +
           '<td class="text-end text-nowrap">' +
+            '<button type="button" class="btn btn-sm btn-light border ' + (p.is_hidden ? 'text-secondary' : 'text-primary') + '" data-toggle-vis="' + p.id +
+                   '" title="' + (p.is_hidden ? 'Hiện lại' : 'Ẩn sản phẩm') + '" aria-label="Ẩn/Hiện sản phẩm"><i class="bi ' + (p.is_hidden ? 'bi-eye-slash' : 'bi-eye') + '"></i></button> ' +
             '<button type="button" class="btn btn-sm btn-light border" data-edit="' + p.id +
                    '" title="Sửa" aria-label="Sửa sản phẩm"><i class="bi bi-pencil"></i></button> ' +
             '<button type="button" class="btn btn-sm btn-light border text-danger" data-del="' + p.id +
@@ -284,7 +286,10 @@
       b.addEventListener('click', function () { bulk(b.getAttribute('data-bulk')); });
     });
 
-    // --- Sửa / xóa ---
+    // --- Sửa / xóa / ẩn hiện ---
+    view.querySelectorAll('[data-toggle-vis]').forEach(function (b) {
+      b.addEventListener('click', function () { toggleVisibility(Number(b.getAttribute('data-toggle-vis'))); });
+    });
     view.querySelectorAll('[data-edit]').forEach(function (b) {
       b.addEventListener('click', function () { openForm(Number(b.getAttribute('data-edit'))); });
     });
@@ -384,8 +389,21 @@
   }
 
   /* ======================================================================
-   * 5. XÓA MỘT SẢN PHẨM
+   * 5. XÓA / ÂN HIỆN MỘT SẢN PHẨM
    * ====================================================================== */
+
+  async function toggleVisibility(id) {
+    var { data: p } = await supabase.from('product').select('is_hidden').eq('id', id).single();
+    if (!p) return;
+    var newStatus = p.is_hidden ? false : true;
+    var { error } = await supabase.from('product').update({ is_hidden: newStatus }).eq('id', id);
+    if (error) {
+      ui.toast('Lỗi khi cập nhật trạng thái.', 'err');
+    } else {
+      ui.toast(newStatus ? 'Đã ẩn sản phẩm.' : 'Đã hiện sản phẩm.', 'ok');
+      Admin.reload();
+    }
+  }
 
   async function remove(id) {
     var { data: p } = await supabase.from('product').select('name').eq('id', id).single();
@@ -486,13 +504,13 @@
                 'để cộng tiền đơn hàng không bị sai số lẻ.</div>' +
             '</div>' +
 
-            '<div class="col-md-6">' +
+            '<div class="col-md-4">' +
               '<label class="form-label" for="f-moq">Đặt hàng tối thiểu</label>' +
               '<input class="form-control" id="f-moq" name="moq" placeholder="Ví dụ: 10 Cuộn" ' +
                      'value="' + esc(p.moq || '') + '">' +
             '</div>' +
 
-            '<div class="col-md-3">' +
+            '<div class="col-md-4">' +
               '<label class="form-label" for="f-rating">Đánh giá (0–5)</label>' +
               '<input class="form-control" id="f-rating" name="rating" inputmode="decimal" ' +
                      'placeholder="Để trống" value="' +
@@ -500,13 +518,22 @@
               '<div class="form-text fs-12">Trống = chưa có đánh giá</div>' +
             '</div>' +
 
-            '<div class="col-md-3">' +
+            '<div class="col-md-4">' +
               '<label class="form-label d-block">Tình trạng kho</label>' +
               '<div class="form-check form-switch mt-2">' +
                 '<input class="form-check-input" type="checkbox" role="switch" id="f-stock" ' +
                        'name="in_stock"' + (Number(p.in_stock) ? ' checked' : '') + '>' +
                 '<label class="form-check-label fs-13" for="f-stock" id="stockLabel">' +
                   (Number(p.in_stock) ? 'Còn hàng' : 'Hết hàng') + '</label>' +
+              '</div>' +
+            '</div>' +
+
+            '<div class="col-12 mt-2">' +
+              '<div class="form-check form-switch border p-2 rounded bg-light">' +
+                '<input class="form-check-input ms-0 me-2" type="checkbox" role="switch" id="f-hidden" ' +
+                       'name="is_hidden"' + (p.is_hidden ? ' checked' : '') + '>' +
+                '<label class="form-check-label fs-14 fw-semibold text-danger" for="f-hidden" id="hiddenLabel">' +
+                  'Ngừng hiển thị sản phẩm này trên trang web' + '</label>' +
               '</div>' +
             '</div>' +
 
@@ -681,6 +708,7 @@
         })(),
 
       in_stock: form.elements.in_stock.checked ? 1 : 0,
+      is_hidden: form.elements.is_hidden.checked,
       moq: form.elements.moq.value.trim() || null,
       rating: rating === '' ? null : Number(rating.replace(',', '.'))
     };

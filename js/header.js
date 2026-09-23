@@ -43,10 +43,10 @@ document.write(`
           <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
             style="font-size:0.6rem" id="cartCount">0</span>
         </a>
-        <a href="#" class="text-dark fs-5 position-relative text-decoration-none" onclick="return false;">
-          <i class="bi bi-suit-heart"></i>
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-            style="font-size:0.6rem">0</span>
+        <a href="#" class="text-dark fs-5 position-relative text-decoration-none" id="btnNotice" title="Thông báo" onclick="return false;">
+          <i class="bi bi-bell"></i>
+          <span class="position-absolute top-0 start-100 translate-middle badge border border-light rounded-circle bg-danger p-1 d-none"
+            style="width: 10px; height: 10px; margin-top: 6px;" id="noticeBadge"><span class="visually-hidden">Tin mới</span></span>
         </a>
         <a href="admin/login.html" class="text-dark fs-5 text-decoration-none"><i class="bi bi-person"></i></a>
 
