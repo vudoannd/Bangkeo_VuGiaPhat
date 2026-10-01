@@ -35,9 +35,9 @@
      mục thì sửa đúng một chỗ. */
   var NAV = [
     { group: '',           items: ['dashboard'] },
-    { group: 'Nội dung',   items: ['carousel', 'notices'] },
+    { group: 'Nội dung',   items: ['carousel', 'notices', 'pages', 'testimonials'] },
     { group: 'Bán hàng',   items: ['orders', 'products', 'categories'] },
-    { group: 'Người dùng', items: ['users', 'feedback'] },
+    { group: 'Người dùng', items: ['users', 'feedback', 'leads'] },
     ];
 
   var DEFAULT_PAGE = 'dashboard';

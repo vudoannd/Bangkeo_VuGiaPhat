@@ -2,6 +2,13 @@
 <html lang="vi">
 
 <head>
+  <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+<!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description"
@@ -17,6 +24,10 @@
 </head>
 
 <body data-page="product-detail">
+  <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 
   <a class="skip-link" href="#main">Bỏ qua, đến nội dung chính</a>
 
@@ -71,6 +82,19 @@
           </div>
 
           <!-- Giá -->
+          <div class="mb-4 d-none" id="priceTiersContainer">
+            <h6 class="fw-bold mb-2">Bảng giá sỉ (Tham khảo)</h6>
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered text-center mb-0 price-tiers-table">
+                <thead class="table-light">
+                  <tr id="priceTiersQtyRow"></tr>
+                </thead>
+                <tbody>
+                  <tr id="priceTiersPriceRow" class="text-danger fw-bold"></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
           <div class="p-3 bg-light rounded-3 mb-4">
             <div class="fs-2 fw-bold text-danger mb-1" id="pdPrice">Liên hệ</div>
             <div class="small text-muted">Giá sỉ tùy thuộc vào số lượng. Đơn tối thiểu: <span id="pdMoq"
@@ -133,6 +157,16 @@
             <li><i class="bi bi-check-circle-fill text-success me-2"></i>Cam kết đúng độ dày, đủ chiều dài (yard).</li>
             <li><i class="bi bi-check-circle-fill text-success me-2"></i>Giao hàng nhanh 24h nội thành TP.HCM.</li>
           </ul>
+
+          <!-- Chia sẻ MXH -->
+          <div class="mt-4 pt-3 border-top d-flex align-items-center gap-2">
+            <span class="small fw-bold text-muted">Chia sẻ:</span>
+            <div class="share-buttons">
+              <a href="#" class="share-btn text-primary border" onclick="shareSocial('facebook'); return false;"><i class="bi bi-facebook"></i></a>
+              <a href="#" class="share-btn text-info border" onclick="shareSocial('twitter'); return false;"><i class="bi bi-twitter"></i></a>
+              <a href="#" class="share-btn text-secondary border" onclick="shareSocial('copy'); return false;"><i class="bi bi-link-45deg"></i></a>
+            </div>
+          </div>
 
         </div>
       </div>
@@ -208,6 +242,22 @@
       </div>
 
     </div>
+      <!-- ========================== SẢN PHẨM CÙNG DANH MỤC ========================== -->
+      <div class="mt-5 pt-5 border-top">
+        <h3 class="fw-bold mb-4">Sản phẩm cùng danh mục</h3>
+        <div class="row g-3 g-md-4" id="relatedProductsGrid">
+          <!-- Render from JS -->
+        </div>
+      </div>
+
+      <!-- ========================== ĐÃ XEM GẦN ĐÂY ========================== -->
+      <div class="mt-5 pt-5 border-top d-none" id="recentProductsSection">
+        <h3 class="fw-bold mb-4">Sản phẩm đã xem</h3>
+        <div class="row g-3 g-md-4" id="recentProductsGrid">
+          <!-- Render from JS -->
+        </div>
+      </div>
+
   </main>
 
   <!-- Script SEO và Product Detail -->
@@ -215,66 +265,7 @@
   <script src="js/product-detail.js"></script>
 
   <!-- ============================ FOOTER ============================ -->
-  <footer class="site-footer text-white pt-5" style="background-color: var(--brand);">
-    <div class="container">
-      <div class="row g-4 pb-4">
-
-        <div class="col-md-6 col-lg-3">
-          <h4 class="text-white text-uppercase fs-6 mb-3 fw-bold">Thông tin liên hệ</h4>
-          <ul class="list-unstyled small d-flex flex-column gap-3">
-            <li class="d-flex gap-2 align-items-center">
-              <i class="bi bi-telephone"></i>
-              <a href="tel:02838123456" class="text-white text-decoration-none" data-setting-href="hotline1"
-                data-setting-prefix="tel:" data-setting-text="hotline1">028 3812 3456</a>
-            </li>
-            <li class="d-flex gap-2 align-items-center">
-              <i class="bi bi-envelope"></i>
-              <a href="mailto:info@vugiaphat.vn" class="text-white text-decoration-none" data-setting-href="email1"
-                data-setting-prefix="mailto:" data-setting-text="email1">info@vugiaphat.vn</a>
-            </li>
-            <li class="d-flex gap-2 align-items-center">
-              <i class="bi bi-globe"></i>
-              <a href="#" class="text-white text-decoration-none">www.giaphat.com.vn</a>
-            </li>
-          </ul>
-        </div>
-
-        <div class="col-md-6 col-lg-3">
-          <h4 class="text-white text-uppercase fs-6 mb-3 fw-bold">Địa chỉ</h4>
-          <ul class="list-unstyled small d-flex flex-column gap-3">
-            <li class="d-flex gap-2">
-              <i class="bi bi-geo-alt mt-1"></i>
-              <span data-setting-text="address">123 Đuờng Tân Thới Hiệp, Quận 12, TP.HCM</span>
-            </li>
-          </ul>
-        </div>
-
-        <div class="col-6 col-lg-3">
-          <h4 class="text-white text-uppercase fs-6 mb-3 fw-bold">Liên kết nhanh</h4>
-          <ul class="list-unstyled small d-flex flex-column gap-2">
-            <li><a href="index.html" class="text-white text-decoration-none">Sơ đồ trang</a></li>
-            <li><a href="products.html" class="text-white text-decoration-none">Sản phẩm</a></li>
-            <li><a href="contact.html" class="text-white text-decoration-none">Liên hệ</a></li>
-            <li><a href="blog.html" class="text-white text-decoration-none">Tin tức & Sự kiện</a></li>
-          </ul>
-        </div>
-
-        <div class="col-6 col-lg-3">
-          <h4 class="text-white text-uppercase fs-6 mb-3 fw-bold">Chính sách</h4>
-          <ul class="list-unstyled small d-flex flex-column gap-2">
-            <li><a href="#" class="text-white text-decoration-none">Chính sách bảo mật</a></li>
-            <li><a href="#" class="text-white text-decoration-none">Điều khoản dịch vụ</a></li>
-            <li><a href="#" class="text-white text-decoration-none">Chính sách đổi trả</a></li>
-          </ul>
-        </div>
-
-      </div>
-
-      <div class="border-top border-light border-opacity-25 py-3 text-start small">
-        Copyright 2024 GIA PHÁT
-      </div>
-    </div>
-  </footer>
+  <script src="js/footer.js"></script>
 
 
   </div>

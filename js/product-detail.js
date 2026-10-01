@@ -4,6 +4,25 @@
     return urlParams.get(param);
   }
 
+  window.shareSocial = function(network) {
+    var url = encodeURIComponent(window.location.href);
+    var title = encodeURIComponent(document.title);
+    if (network === 'facebook') {
+      window.open('https://www.facebook.com/sharer/sharer.php?u=' + url, '_blank', 'width=600,height=400');
+    } else if (network === 'twitter') {
+      window.open('https://twitter.com/intent/tweet?url=' + url + '&text=' + title, '_blank', 'width=600,height=400');
+    } else if (network === 'copy') {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(window.location.href).then(function() {
+          if (window.toast) toast('Đã copy đường dẫn!', 'success');
+          else alert('Đã copy đường dẫn!');
+        });
+      } else {
+        alert('Copy đường dẫn: ' + window.location.href);
+      }
+    }
+  };
+
   function renderProductDetail(product, category) {
     // 1. Breadcrumb & Titles
     document.getElementById('bcProductName').textContent = product.title;
@@ -16,6 +35,29 @@
     var priceNum = isFinite(product.price) ? Number(product.price) : null;
     document.getElementById('pdPrice').textContent = priceNum ? priceNum.toLocaleString('vi-VN') + ' đ' : 'Liên hệ';
     document.getElementById('pdMoq').textContent = product.moq || 'Liên hệ';
+
+    // 2.5 Price Tiers
+    var tiers = [];
+    try {
+      tiers = product.price_tiers ? (typeof product.price_tiers === 'string' ? JSON.parse(product.price_tiers) : product.price_tiers) : [];
+    } catch(e) {}
+    
+    if (tiers && tiers.length > 0) {
+      var container = document.getElementById('priceTiersContainer');
+      if (container) {
+        container.classList.remove('d-none');
+        var qtyHtml = '<th>Số lượng</th>';
+        var priceHtml = '<th>Đơn giá</th>';
+        tiers.forEach(function(t) {
+          qtyHtml += '<td>' + t.quantity + '</td>';
+          priceHtml += '<td>' + Number(t.price).toLocaleString('vi-VN') + ' đ</td>';
+        });
+        var qtyRow = document.getElementById('priceTiersQtyRow');
+        var priceRow = document.getElementById('priceTiersPriceRow');
+        if(qtyRow) qtyRow.innerHTML = qtyHtml;
+        if(priceRow) priceRow.innerHTML = priceHtml;
+      }
+    }
 
     // 3. Quick Specs
     document.getElementById('pdThickness').textContent = product.thickness || '-';
@@ -93,6 +135,59 @@
     if (window.generateProductJSONLD) {
       window.generateProductJSONLD(product, category);
     }
+
+    // 10. Related Products
+    if (category && window.productCardHTML) {
+      supabaseClient.from('product').select('*').eq('category_id', category.id).neq('id', product.id).limit(4)
+        .then(function(res) {
+          if (res.data && res.data.length > 0) {
+            var html = '';
+            res.data.forEach(function(rp) {
+              html += window.productCardHTML(formatProduct(rp), false);
+            });
+            var grid = document.getElementById('relatedProductsGrid');
+            if (grid) grid.innerHTML = html;
+          } else {
+            var grid = document.getElementById('relatedProductsGrid');
+            if (grid) grid.innerHTML = '<div class="col-12 text-muted">Không có sản phẩm cùng danh mục.</div>';
+          }
+        });
+    }
+
+    // 11. Recently Viewed
+    var recent = JSON.parse(localStorage.getItem('vgp_recent_products') || '[]');
+    recent = recent.filter(function(id) { return id != product.id; });
+    recent.unshift(product.id);
+    if (recent.length > 4) recent.pop();
+    localStorage.setItem('vgp_recent_products', JSON.stringify(recent));
+
+    if (recent.length > 1 && window.productCardHTML) {
+      var recentToFetch = recent.filter(function(id) { return id != product.id; });
+      supabaseClient.from('product').select('*').in('id', recentToFetch)
+        .then(function(res) {
+          if (res.data && res.data.length > 0) {
+            var sec = document.getElementById('recentProductsSection');
+            if (sec) sec.classList.remove('d-none');
+            var html = '';
+            res.data.forEach(function(rp) {
+              html += window.productCardHTML(formatProduct(rp), false);
+            });
+            var grid = document.getElementById('recentProductsGrid');
+            if (grid) grid.innerHTML = html;
+          }
+        });
+    }
+  }
+
+  function formatProduct(p) {
+    p.title = p.name;
+    p.inStock = Number(p.in_stock) !== 0;
+    if (p.image && p.image.indexOf('images/products/') === -1) {
+      p.image = 'images/products/' + p.image.replace(/\.(png|jpg|jpeg)$/i, '.webp');
+    }
+    // ensure price is a number
+    if (p.price != null) p.price = Number(p.price);
+    return p;
   }
 
   function init() {

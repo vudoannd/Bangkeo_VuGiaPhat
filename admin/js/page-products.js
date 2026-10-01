@@ -459,7 +459,7 @@
       p = data;
     } else {
       p = { id: null, category_id: null, name: '', description: '', price: '', image: '',
-            in_stock: 1, moq: '', rating: null };
+            in_stock: 1, moq: '', rating: null, price_tiers: null };
     }
     if (!p) { ui.toast('Không tìm thấy sản phẩm.', 'err'); return; }
 
@@ -502,6 +502,15 @@
               '</div>' +
               '<div class="form-text fs-12">Nhập số nguyên, đơn vị đồng. CSDL lưu kiểu INTEGER ' +
                 'để cộng tiền đơn hàng không bị sai số lẻ.</div>' +
+            '</div>' +
+            
+            '<div class="col-12 mt-2">' +
+              '<div class="d-flex justify-content-between align-items-center border-bottom pb-1 mb-2">' +
+                '<label class="form-label fw-semibold fs-14 text-brand mb-0">Bảng giá sỉ (Tùy chọn)</label>' +
+                '<button type="button" class="btn btn-sm btn-outline-primary" id="addTierBtn"><i class="bi bi-plus-circle me-1"></i>Thêm mốc giá</button>' +
+              '</div>' +
+              '<div id="priceTiersWrapper"></div>' +
+              '<input type="hidden" id="f-price-tiers" name="price_tiers" value="' + esc(typeof p.price_tiers === 'string' ? p.price_tiers : (p.price_tiers ? JSON.stringify(p.price_tiers) : '')) + '">' +
             '</div>' +
 
             '<div class="col-md-4">' +
@@ -629,6 +638,63 @@
         priceInput.addEventListener('input', syncPrice);
         syncPrice();
 
+        // Xử lý UI Bảng giá sỉ
+        var tiersWrapper = el.querySelector('#priceTiersWrapper');
+        var hiddenTiers = form.elements.price_tiers;
+        var currentTiers = [];
+        try {
+          if (hiddenTiers.value) currentTiers = JSON.parse(hiddenTiers.value);
+        } catch (e) {}
+        
+        function renderTiers() {
+          if (currentTiers.length === 0) {
+            tiersWrapper.innerHTML = '<div class="text-center text-ink-3 fs-13 py-2 bg-light rounded border border-dashed">Chưa có mốc giá sỉ. Cài đặt nếu muốn bán rẻ hơn khi mua số lượng nhiều.</div>';
+            return;
+          }
+          var html = '<table class="table table-sm table-bordered fs-13 mb-0 text-center align-middle"><thead><tr class="bg-light"><th>SL Từ</th><th>SL Đến</th><th>Giá/Đơn vị</th><th>Xóa</th></tr></thead><tbody>';
+          for (var i = 0; i < currentTiers.length; i++) {
+            var t = currentTiers[i];
+            html += '<tr>' +
+              '<td><input class="form-control form-control-sm text-center t-min" data-idx="' + i + '" type="number" min="1" value="' + (t.min_quantity || '') + '"></td>' +
+              '<td><input class="form-control form-control-sm text-center t-max" data-idx="' + i + '" type="text" placeholder="∞" value="' + (t.max_quantity || '') + '"></td>' +
+              '<td><input class="form-control form-control-sm text-center t-price" data-idx="' + i + '" type="number" value="' + (t.price || '') + '"></td>' +
+              '<td><button type="button" class="btn btn-sm text-danger t-del" data-idx="' + i + '"><i class="bi bi-trash"></i></button></td>' +
+            '</tr>';
+          }
+          html += '</tbody></table>';
+          tiersWrapper.innerHTML = html;
+          
+          tiersWrapper.querySelectorAll('.t-del').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+               var idx = Number(e.currentTarget.getAttribute('data-idx'));
+               currentTiers.splice(idx, 1);
+               updateTiersJSON();
+               renderTiers();
+            });
+          });
+          tiersWrapper.querySelectorAll('input').forEach(function(inp) {
+            inp.addEventListener('input', function(e) {
+               var idx = Number(e.currentTarget.getAttribute('data-idx'));
+               var cls = e.currentTarget.className;
+               if (cls.indexOf('t-min') !== -1) currentTiers[idx].min_quantity = Number(e.currentTarget.value) || 0;
+               if (cls.indexOf('t-max') !== -1) currentTiers[idx].max_quantity = e.currentTarget.value ? (Number(e.currentTarget.value) || null) : null;
+               if (cls.indexOf('t-price') !== -1) currentTiers[idx].price = Number(e.currentTarget.value) || 0;
+               updateTiersJSON();
+            });
+          });
+        }
+        
+        function updateTiersJSON() {
+           var valid = currentTiers.filter(function(t) { return t.min_quantity > 0 && t.price > 0; });
+           hiddenTiers.value = valid.length ? JSON.stringify(valid) : '';
+        }
+        
+        el.querySelector('#addTierBtn').addEventListener('click', function() {
+           currentTiers.push({ min_quantity: '', max_quantity: null, price: '' });
+           renderTiers();
+        });
+        renderTiers();
+
         // Nhãn công tắc đổi theo trạng thái
         form.elements.in_stock.addEventListener('change', function (e) {
           el.querySelector('#stockLabel').textContent = e.target.checked ? 'Còn hàng' : 'Hết hàng';
@@ -698,6 +764,11 @@
       application: form.querySelector('[name="application"]').value.trim() || null,
       price: Number(String(form.elements.price.value).replace(/[^\d]/g, '')),
       image: form.elements.image.value.trim() || null,
+      price_tiers: (function() {
+        var val = form.elements.price_tiers.value.trim();
+        if (!val) return null;
+        try { return JSON.parse(val); } catch (e) { return null; }
+      })(),
         gallery: (function() {
           var val = form.elements.gallery.value.trim();
           if (!val) return null;

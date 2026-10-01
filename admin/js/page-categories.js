@@ -152,7 +152,7 @@
       var { data } = await supabase.from('category').select('*').eq('id', id).single();
       c = data;
     } else {
-      c = { id: null, name: '', description: '' };
+      c = { id: null, name: '', description: '', seo_title: '', seo_description: '', seo_article: '' };
     }
     if (!c) return;
 
@@ -165,12 +165,24 @@
             '<input class="form-control" id="c-name" name="name" value="' + esc(c.name) + '" ' +
                    'placeholder="Ví dụ: Băng keo vải">' +
           '</div>' +
-          '<div class="mb-0">' +
-            '<label class="form-label" for="c-desc">Mô tả</label>' +
+          '<div class="mb-3">' +
+            '<label class="form-label" for="c-desc">Mô tả (Hiển thị thẻ danh mục)</label>' +
             '<textarea class="form-control" id="c-desc" name="description" rows="3" ' +
                       'placeholder="Một câu ngắn mô tả nhóm sản phẩm này">' +
               esc(c.description || '') + '</textarea>' +
-            '<div class="form-text fs-12">Câu mô tả này hiện trên thẻ danh mục ở trang chủ.</div>' +
+          '</div>' +
+          '<h6 class="mt-4 border-bottom pb-2 mb-3">Tối ưu SEO (Tùy chọn)</h6>' +
+          '<div class="mb-3">' +
+            '<label class="form-label" for="c-seo-title">SEO Title</label>' +
+            '<input class="form-control" id="c-seo-title" name="seo_title" value="' + esc(c.seo_title || '') + '">' +
+          '</div>' +
+          '<div class="mb-3">' +
+            '<label class="form-label" for="c-seo-desc">SEO Description</label>' +
+            '<textarea class="form-control" id="c-seo-desc" name="seo_description" rows="2">' + esc(c.seo_description || '') + '</textarea>' +
+          '</div>' +
+          '<div class="mb-0">' +
+            '<label class="form-label" for="c-seo-article">Bài viết SEO (HTML)</label>' +
+            '<textarea class="form-control" id="c-seo-article" name="seo_article" rows="4">' + esc(c.seo_article || '') + '</textarea>' +
           '</div>' +
         '</form>',
       footer:
@@ -186,6 +198,9 @@
 
           var name = form.elements.name.value.trim();
           var desc = form.elements.description.value.trim() || null;
+          var seo_title = form.elements.seo_title.value.trim() || null;
+          var seo_description = form.elements.seo_description.value.trim() || null;
+          var seo_article = form.elements.seo_article.value.trim() || null;
 
           // Tên trùng không bị CSDL chặn, nhưng hai danh mục cùng tên thì
           // bộ lọc bên website khách sẽ khó hiểu -> cảnh báo sớm ở đây.
@@ -201,10 +216,18 @@
             return;
           }
 
+          var recordData = { 
+            name: name, 
+            description: desc, 
+            seo_title: seo_title, 
+            seo_description: seo_description, 
+            seo_article: seo_article 
+          };
+
           if (id) {
-            await supabase.from('category').update({ name: name, description: desc }).eq('id', id);
+            await supabase.from('category').update(recordData).eq('id', id);
           } else {
-            await supabase.from('category').insert({ name: name, description: desc });
+            await supabase.from('category').insert(recordData);
           }
 
           close();

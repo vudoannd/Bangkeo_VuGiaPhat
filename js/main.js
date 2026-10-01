@@ -34,6 +34,24 @@
     return Array.prototype.slice.call((ctx || document).querySelectorAll(sel));
   };
 
+  /**
+   * Theo dõi sự kiện (Event Tracking) gửi tới GA4 và Facebook Pixel.
+   */
+  function trackEvent(eventName, params) {
+    try {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', eventName, params);
+      }
+      if (typeof window.fbq === 'function') {
+        window.fbq('trackCustom', eventName, params);
+      }
+    } catch (e) {
+      console.warn('Lỗi tracking:', e);
+    }
+  }
+  // Expose ra window để có thể gọi từ inline onclick attributes
+  window.trackEvent = trackEvent;
+
   /** Định dạng tiền Việt Nam: 8040 -> "8.040 ₫" */
   var vnd = new Intl.NumberFormat('vi-VN', {
     style: 'currency', currency: 'VND', maximumFractionDigits: 0
@@ -1103,7 +1121,7 @@
             var field = form.elements[name];
             if (field) setError(field, '');
           });
-          toast('Cảm ơn ' + record.fullname + '! Chúng tôi sẽ phản hồi trong 24 giờ.', 'ok');
+          window.location.href = 'thank-you.html';
         }
       });
     });
@@ -1120,17 +1138,31 @@
     var zalo = (window.__SETTINGS_MAP__ && window.__SETTINGS_MAP__.zalo_link)
       ? window.__SETTINGS_MAP__.zalo_link
       : 'https://zalo.me/0901234567';
+    var facebook = (window.__SETTINGS_MAP__ && window.__SETTINGS_MAP__.facebook_link)
+      ? window.__SETTINGS_MAP__.facebook_link
+      : 'https://facebook.com/vugiaphat';
+    var tiktok = (window.__SETTINGS_MAP__ && window.__SETTINGS_MAP__.tiktok_link)
+      ? window.__SETTINGS_MAP__.tiktok_link
+      : 'https://tiktok.com/@vugiaphat';
 
     var div = document.createElement('div');
-    div.className = 'floating-widget';
+    div.className = 'floating-widget floating-cta';
     div.innerHTML = 
-      '<a href="tel:' + phone + '" class="float-btn float-phone" aria-label="Gọi điện thoại" data-setting-href="hotline1" data-setting-prefix="tel:">' +
-        '<i class="bi bi-telephone-fill"></i>' +
-        '<span class="tooltip-text">Gọi Hotline</span>' +
+      '<a href="' + tiktok + '" target="_blank" class="float-btn float-tiktok pulse" aria-label="TikTok" data-setting-href="tiktok_link" onclick="window.trackEvent(\'click_tiktok\')">' +
+        '<i class="bi bi-tiktok"></i>' +
+        '<span class="tooltip-text">TikTok</span>' +
       '</a>' +
-      '<a href="' + zalo + '" target="_blank" class="float-btn float-zalo" aria-label="Chat Zalo" data-setting-href="zalo_link">' +
+      '<a href="' + facebook + '" target="_blank" class="float-btn float-facebook pulse" aria-label="Chat Facebook" data-setting-href="facebook_link" onclick="window.trackEvent(\'click_facebook\')">' +
+        '<i class="bi bi-facebook"></i>' +
+        '<span class="tooltip-text">Chat Facebook</span>' +
+      '</a>' +
+      '<a href="' + zalo + '" target="_blank" class="float-btn float-zalo pulse" aria-label="Chat Zalo" data-setting-href="zalo_link" onclick="window.trackEvent(\'click_zalo\')">' +
         'Zalo' +
         '<span class="tooltip-text">Chat Zalo</span>' +
+      '</a>' +
+      '<a href="tel:' + phone + '" class="float-btn float-phone pulse" aria-label="Gọi điện thoại" data-setting-href="hotline1" data-setting-prefix="tel:" onclick="window.trackEvent(\'click_hotline\')">' +
+        '<i class="bi bi-telephone-fill"></i>' +
+        '<span class="tooltip-text">Gọi Hotline</span>' +
       '</a>';
     document.body.appendChild(div);
   }
@@ -1170,7 +1202,122 @@
              hrefEls[j].setAttribute('href', prefix + val);
           }
         }
+        
+        var srcEls = document.querySelectorAll('[data-setting-src]');
+        for (var k = 0; k < srcEls.length; k++) {
+          var key = srcEls[k].getAttribute('data-setting-src');
+          if (settingsMap[key]) {
+             srcEls[k].setAttribute('src', settingsMap[key]);
+          }
+        }
+        
+        renderAnnouncementBar();
       });
+  }
+
+  function renderAnnouncementBar() {
+    var settings = window.__SETTINGS_MAP__;
+    if (settings && settings.announcement_enabled === 'true' && settings.announcement_text) {
+      var link = settings.announcement_link || '#';
+      var barHtml = 
+        '<div class="announcement-bar bg-brand-gradient text-white text-center py-2 px-3 fw-medium" style="font-size: 0.9rem; z-index: 1050; position: relative;">' +
+          '<a href="' + escapeHtml(link) + '" class="text-white text-decoration-none d-block">' +
+             escapeHtml(settings.announcement_text) +
+          '</a>' +
+        '</div>';
+      var header = document.querySelector('header');
+      if (header) {
+        header.insertAdjacentHTML('beforebegin', barHtml);
+      } else {
+        document.body.insertAdjacentHTML('afterbegin', barHtml);
+      }
+    }
+  }
+
+  function renderQuickQuoteModal() {
+    var modalHtml = 
+      '<div class="modal fade quick-quote-modal" id="quickQuoteModal" tabindex="-1" aria-labelledby="quickQuoteModalLabel" aria-hidden="true">' +
+        '<div class="modal-dialog modal-dialog-centered">' +
+          '<div class="modal-content">' +
+            '<div class="modal-header bg-brand-gradient text-white border-0">' +
+              '<h5 class="modal-title fw-bold" id="quickQuoteModalLabel"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Báo Giá Nhanh</h5>' +
+              '<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>' +
+            '</div>' +
+            '<form id="quickQuoteForm">' +
+              '<div class="modal-body p-4">' +
+                '<p class="small text-muted mb-4">Nhận báo giá sỉ ngay qua Zalo. Vui lòng để lại thông tin của bạn!</p>' +
+                '<div class="mb-3">' +
+                  '<label for="qqPhone" class="form-label fw-semibold">Số điện thoại / Zalo <span class="text-danger">*</span></label>' +
+                  '<input type="tel" class="form-control" id="qqPhone" name="qqPhone" required placeholder="Ví dụ: 0901234567">' +
+                '</div>' +
+                '<div class="mb-3">' +
+                  '<label for="qqName" class="form-label fw-semibold">Họ và tên</label>' +
+                  '<input type="text" class="form-control" id="qqName" name="qqName" placeholder="Tên của bạn (không bắt buộc)">' +
+                '</div>' +
+                '<div class="mb-3">' +
+                  '<label for="qqProduct" class="form-label fw-semibold">Sản phẩm quan tâm</label>' +
+                  '<input type="text" class="form-control" id="qqProduct" name="qqProduct" placeholder="Ví dụ: Băng keo trong, Màng PE...">' +
+                '</div>' +
+              '</div>' +
+              '<div class="modal-footer border-0 px-4 pb-4 justify-content-between">' +
+                '<button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Đóng</button>' +
+                '<button type="submit" class="btn btn-primary rounded-pill px-4">Nhận Báo Giá Ngay</button>' +
+              '</div>' +
+            '</form>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+      
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    var form = $('#quickQuoteForm');
+    if(form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var phone = $('#qqPhone').value.trim();
+        var name = $('#qqName').value.trim();
+        var product = $('#qqProduct').value.trim();
+        var btn = form.querySelector('button[type="submit"]');
+        
+        btn.disabled = true;
+        btn.textContent = 'Đang gửi...';
+        
+        var record = {
+          name: name,
+          phone: phone,
+          product_interest: product,
+          source: 'quick_quote_modal',
+          created_at: new Date().toISOString()
+        };
+        
+        if (typeof supabaseClient === 'undefined') return;
+        
+        supabaseClient.from('lead').insert([record]).then(function(res) {
+          btn.disabled = false;
+          btn.textContent = 'Nhận Báo Giá Ngay';
+          if (res.error) {
+            console.error(res.error);
+            toast('Lỗi khi gửi thông tin, vui lòng thử lại.', 'err');
+          } else {
+            var bsModal = bootstrap.Modal.getInstance(document.getElementById('quickQuoteModal'));
+            if(bsModal) bsModal.hide();
+            window.location.href = 'thank-you.html';
+          }
+        });
+      });
+    }
+
+    var hasSeenModal = sessionStorage.getItem('vgp_seen_quote_modal');
+    if (!hasSeenModal && window.location.pathname.indexOf('admin') === -1) {
+      setTimeout(function() {
+        var modalEl = document.getElementById('quickQuoteModal');
+        if (modalEl && typeof bootstrap !== 'undefined') {
+          var myModal = new bootstrap.Modal(modalEl);
+          myModal.show();
+          sessionStorage.setItem('vgp_seen_quote_modal', 'true');
+        }
+      }, 15000); 
+    }
   }
 
   /* ======================================================================
@@ -1479,6 +1626,67 @@
       });
   }
 
+  /* ======================================================================
+   * 10. TRANG TĨNH (Chính sách, Điều khoản...)
+   * ====================================================================== */
+  function initPage() {
+    var slug = document.body.getAttribute('data-slug');
+    if (!slug || typeof supabaseClient === 'undefined') return;
+
+    var contentEl = $('#pageContent');
+    var titleEl = $('#pageTitle');
+    var breadcrumbEl = $('#breadcrumbTitle');
+
+    supabaseClient.from('pages').select('*').eq('slug', slug).eq('is_active', true).maybeSingle()
+      .then(function(res) {
+        if (res.error || !res.data) {
+          if (contentEl) contentEl.innerHTML = '<div class="alert alert-warning">Đang cập nhật nội dung.</div>';
+        } else {
+          var page = res.data;
+          if (titleEl) titleEl.textContent = page.title;
+          if (breadcrumbEl) breadcrumbEl.textContent = page.title;
+          if (contentEl) contentEl.innerHTML = page.content || '<p>Nội dung trống.</p>';
+          document.title = page.title + ' - Vũ Gia Phát';
+        }
+      });
+  }
+
+  function initTestimonials() {
+    var grid = $('#testimonialsGrid');
+    if (!grid || typeof supabaseClient === 'undefined') return;
+
+    supabaseClient.from('testimonial').select('*').eq('is_active', true).order('sort_order', {ascending: true}).limit(6)
+      .then(function(res) {
+        if (res.error || !res.data || res.data.length === 0) {
+          grid.innerHTML = '<div class="col-12 text-center text-muted py-5">Đang cập nhật đánh giá.</div>';
+          return;
+        }
+
+        var html = '';
+        res.data.forEach(function(item) {
+          var avatarHtml = item.avatar ? '<img src="'+esc(item.avatar)+'" class="testimonial-avatar" alt="Avatar">' : '<div class="testimonial-avatar bg-brand d-flex align-items-center justify-content-center text-white fw-bold fs-4">' + item.customer_name.charAt(0) + '</div>';
+          var starsHtml = '';
+          for (var i = 0; i < 5; i++) {
+            starsHtml += '<i class="bi bi-star' + (i < item.rating ? '-fill text-warning' : ' text-muted opacity-25') + '"></i> ';
+          }
+
+          html += '<div class="col-md-6 col-lg-4">';
+          html += '<div class="testimonial-card d-flex flex-column">';
+          html += '<div class="mb-3">' + starsHtml + '</div>';
+          html += '<div class="fst-italic text-body-secondary flex-grow-1 mb-4">"' + esc(item.content) + '"</div>';
+          html += '<div class="d-flex align-items-center mt-auto pt-3 border-top">';
+          html += avatarHtml;
+          html += '<div>';
+          html += '<h6 class="fw-bold mb-0">' + esc(item.customer_name) + '</h6>';
+          if (item.company_name) {
+            html += '<small class="text-muted">' + esc(item.company_name) + '</small>';
+          }
+          html += '</div></div></div></div>';
+        });
+        grid.innerHTML = html;
+      });
+  }
+
   function boot() {
     CartManager.init();
     var page = document.body.getAttribute('data-page') || '';
@@ -1487,8 +1695,18 @@
     initToTop();
     initReveal();
     initFloatingWidgets();
+    renderQuickQuoteModal();
     loadSettings();
     initNewsBoard();
+
+    // Trang tĩnh (Privacy, Terms...)
+    if (page === 'page') {
+      initPage();
+    }
+    
+    if (page === 'home') {
+      initTestimonials();
+    }
 
     // Trang liên hệ không cần dữ liệu sản phẩm cho body, nhưng cần cho Mega Menu
     if (page === 'contact') {
@@ -1720,12 +1938,21 @@
             
             CartManager.clear();
             
-            var zaloUrl = "https://zalo.me/" + zaloPhone + "?text=" + encodeURIComponent(msg);
-            window.location.href = zaloUrl;
+            // Redirect sang thank-you.html (vẫn có thể mở zalo ở tab khác nếu cần, nhưng tốt nhất redirect thẳng)
+            // Lựa chọn: Nếu có link zalo thì chuyển sang zalo, nhưng task yêu cầu:
+            // "Update submitContactForm() and submitOrder() to redirect to thank-you.html."
+            window.location.href = 'thank-you.html';
           });
         });
       });
     }
   }
+
+  // Expose for external scripts like product-detail.js
+  window.esc = esc;
+  window.formatPrice = formatPrice;
+  window.productCardHTML = productCardHTML;
+  window.FALLBACK_IMG = FALLBACK_IMG;
+  window.formatMoney = typeof formatMoney !== 'undefined' ? formatMoney : function(val) { return formatPrice(val); };
 
 })();
