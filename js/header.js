@@ -1,3 +1,10 @@
+if (!document.querySelector('link[rel="manifest"]')) {
+  var manifestLink = document.createElement('link');
+  manifestLink.rel = 'manifest';
+  manifestLink.href = 'manifest.json';
+  document.head.appendChild(manifestLink);
+}
+
 document.write(`
   <!-- ============================ TOPBAR ============================ -->
   <div class="topbar text-white py-1 d-none d-lg-block" style="background-color: var(--brand); font-size: 0.85rem;">
@@ -38,7 +45,12 @@ document.write(`
 
       <!-- Icons & Hotline -->
       <div class="d-flex align-items-center gap-3 ms-auto">
-        <a href="cart.html" class="text-dark fs-5 position-relative text-decoration-none" id="btnCart">
+        <a href="compare.html" class="text-dark fs-5 position-relative text-decoration-none" id="btnCompare" title="So sánh sản phẩm">
+          <i class="bi bi-arrows-angle-expand"></i>
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary"
+            style="font-size:0.6rem" id="compareCount">0</span>
+        </a>
+        <a href="cart.html" class="text-dark fs-5 position-relative text-decoration-none" id="btnCart" title="Giỏ hàng">
           <i class="bi bi-cart3"></i>
           <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
             style="font-size:0.6rem" id="cartCount">0</span>

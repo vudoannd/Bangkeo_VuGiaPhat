@@ -18,7 +18,7 @@
 
   /* Trạng thái bộ lọc — giữ ngoài hàm render để chuyển mục rồi quay lại
      vẫn thấy đúng chỗ đang xem. */
-  var state = { q: '', cat: 'all', stock: 'all', rating: 'all', sort: 'id-desc', page: 1, size: 12 };
+  var state = { tab: 'catalog', q: '', cat: 'all', stock: 'all', rating: 'all', sort: 'id-desc', page: 1, size: 12 };
   var picked = {};        // id các dòng đang tick chọn
 
   var SORTS = {
@@ -95,9 +95,41 @@
   async function render(view) {
     // Nhận bộ lọc gửi kèm từ trang tổng quan: #/products?stock=0
     var q = Admin.query();
+    if (q.tab !== undefined && (q.tab === 'catalog' || q.tab === 'b2b-pricing')) { state.tab = q.tab; }
     if (q.stock !== undefined) { state.stock = q.stock; state.page = 1; }
     if (q.cat !== undefined) { state.cat = q.cat; state.page = 1; }
     if (q.rating !== undefined) { state.rating = q.rating; state.page = 1; }
+
+    var subNavHtml =
+      '<div class="card border shadow-sm mb-3">' +
+        '<div class="card-body py-2 px-3 d-flex flex-wrap gap-2 align-items-center justify-content-between">' +
+          '<ul class="nav nav-pills b2b-subnav gap-1">' +
+            '<li class="nav-item">' +
+              '<button type="button" class="nav-link' + (state.tab === 'catalog' ? ' active' : '') + '" data-prod-tab="catalog">' +
+                '<i class="bi bi-box-seam me-1"></i>1. Danh sách Sản phẩm Website' +
+              '</button>' +
+            '</li>' +
+            '<li class="nav-item">' +
+              '<button type="button" class="nav-link' + (state.tab === 'b2b-pricing' ? ' active' : '') + '" data-prod-tab="b2b-pricing">' +
+                '<i class="bi bi-calculator-fill me-1"></i>2. Bảng tính Giá vốn, Chiết khấu 3 Bậc MOQ (300 - 500 - 1.000c) &amp; Công nợ' +
+              '</button>' +
+            '</li>' +
+          '</ul>' +
+        '</div>' +
+      '</div>';
+
+    if (state.tab === 'b2b-pricing') {
+      var allWebProducts = await fetchAll();
+      view.innerHTML = subNavHtml + '<div id="b2bPricingView"></div>';
+      view.querySelectorAll('[data-prod-tab]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          state.tab = btn.getAttribute('data-prod-tab');
+          render(view);
+        });
+      });
+      renderB2BPricingCalculator(view.querySelector('#b2bPricingView'), allWebProducts);
+      return;
+    }
 
     var cats = await categories();
     var rows = await fetchAll();
@@ -106,6 +138,7 @@
     var slice = rows.slice((state.page - 1) * state.size, state.page * state.size);
 
     view.innerHTML =
+      subNavHtml +
       '<div class="card">' +
         '<div class="card-header">' +
           '<div class="d-flex flex-wrap gap-2 align-items-center w-100">' +
@@ -239,6 +272,13 @@
 
   function bind(view, rows) {
     var $ = function (s) { return view.querySelector(s); };
+
+    view.querySelectorAll('[data-prod-tab]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        state.tab = btn.getAttribute('data-prod-tab');
+        render(view);
+      });
+    });
 
     $('#pSearch').addEventListener('input', U.debounce(function (e) {
       state.q = e.target.value;
@@ -799,6 +839,260 @@
     } catch (err) {
       ui.toast('Không lưu được: ' + err.message, 'err');
     }
+  }
+
+  /* ======================================================================
+   * 7. BẢNG TÍNH GIÁ VỐN, CHIẾT KHẤU 3 BẬC MOQ & ĐIỀU KHOẢN CÔNG NỢ (SHEET 5)
+   * ====================================================================== */
+
+  function renderB2BPricingCalculator(container, allWebProducts) {
+    if (!Admin.b2b) {
+      container.innerHTML = '<div class="alert alert-warning">Chưa nạp module b2b-crm-data.js.</div>';
+      return;
+    }
+
+    var cfg = Admin.b2b.getPricingConfig();
+    var crmRecords = Admin.b2b.getRecords();
+    var tierDist = Admin.b2b.computeTierDistribution(crmRecords);
+    var totalKh = crmRecords.length || 1;
+    var totalVol = crmRecords.reduce(function (s, r) { return s + (Number(r.expectedVolume) || 0); }, 0);
+    var avgVol = Math.round((totalVol / totalKh) * 10) / 10;
+
+    // Đồng bộ % CK và số ngày công nợ đang cấu hình vào bảng phân bổ bậc
+    tierDist[1].discountPct = cfg.tier2DiscountPct;
+    tierDist[1].creditDays = cfg.tier2CreditDays;
+    tierDist[2].discountPct = cfg.tier3DiscountPct;
+    tierDist[2].creditDays = cfg.tier3CreditDays;
+
+    container.innerHTML =
+      /* Bảng 1: Phân bổ 36 KH theo 3 Bậc định mức (MOQ) & Điều khoản công nợ chuẩn */
+      '<div class="card border shadow-sm mb-4">' +
+        '<div class="card-header bg-brand-lighter d-flex flex-wrap justify-content-between align-items-center">' +
+          '<div>' +
+            '<h2 class="h6 fw-bold text-dark mb-0">1. PHÂN BỔ ' + crmRecords.length + ' KHÁCH HÀNG MỤC TIÊU THEO BẬC ĐỊNH MỨC (MOQ) &amp; ĐIỀU KHOẢN CÔNG NỢ CHUẨN</h2>' +
+            '<div class="fs-12 text-ink-2">Các ô màu vàng nhạt là Ô Nhập Liệu Mở — chỉnh % Chiết khấu hoặc Số ngày công nợ để bảng tính bên dưới tự động cập nhật</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="table-responsive">' +
+          '<table class="table table-bordered table-hover align-middle mb-0 fs-13">' +
+            '<thead class="table-light">' +
+              '<tr>' +
+                '<th>Mã Bậc</th>' +
+                '<th>Bậc Định Mức Sản Lượng (Cuộn/Tháng)</th>' +
+                '<th class="num">Số KH (Từ CRM)</th>' +
+                '<th class="num">Tỷ Trọng KH (%)</th>' +
+                '<th class="num">Tổng Sản Lượng (Cuộn/Tháng)</th>' +
+                '<th class="num">Tỷ Trọng SL (%)</th>' +
+                '<th class="num">SL Trung Bình (Cuộn/KH)</th>' +
+                '<th class="text-center" style="width:125px">Tỷ Lệ CK Đề Xuất (%)</th>' +
+                '<th class="text-center" style="width:125px">Số Ngày Công Nợ Tối Đa</th>' +
+                '<th>Điều Khoản Giao Hàng &amp; Thanh Toán Khuyến Nghị</th>' +
+              '</tr>' +
+            '</thead>' +
+            '<tbody>' +
+              tierDist.map(function (t, idx) {
+                var ckCell = idx === 0
+                  ? '<span class="fw-bold">0%</span>'
+                  : '<input type="number" step="0.5" min="0" max="50" class="form-control form-control-sm text-center b2b-input-yellow" data-tier-cfg="' + (idx === 1 ? 'tier2DiscountPct' : 'tier3DiscountPct') + '" value="' + t.discountPct + '">';
+                var cnCell = idx === 0
+                  ? '<span class="fw-bold">0 ngày (COD)</span>'
+                  : '<input type="number" step="5" min="0" max="90" class="form-control form-control-sm text-center b2b-input-yellow" data-tier-cfg="' + (idx === 1 ? 'tier2CreditDays' : 'tier3CreditDays') + '" value="' + t.creditDays + '">';
+                return '<tr>' +
+                  '<td class="fw-bold text-brand">' + esc(t.code) + '</td>' +
+                  '<td class="fw-semibold">' + esc(t.label) + '</td>' +
+                  '<td class="num fw-bold">' + U.num(t.count) + '</td>' +
+                  '<td class="num">' + t.countPct + '%</td>' +
+                  '<td class="num fw-bold text-brand">' + U.num(t.volume) + '</td>' +
+                  '<td class="num">' + t.volumePct + '%</td>' +
+                  '<td class="num">' + U.num(t.avgVolume) + '</td>' +
+                  '<td class="text-center">' + ckCell + '</td>' +
+                  '<td class="text-center">' + cnCell + '</td>' +
+                  '<td class="fs-12 text-ink-2">' + esc(t.terms) + '</td>' +
+                '</tr>';
+              }).join('') +
+            '</tbody>' +
+            '<tfoot class="table-light fw-bold">' +
+              '<tr>' +
+                '<td>TỔNG</td>' +
+                '<td>Toàn bộ Phễu B2B (' + crmRecords.length + ' Khách hàng)</td>' +
+                '<td class="num">' + U.num(crmRecords.length) + '</td>' +
+                '<td class="num">100%</td>' +
+                '<td class="num text-danger">' + U.num(totalVol) + ' cuộn</td>' +
+                '<td class="num">100%</td>' +
+                '<td class="num">' + avgVol + '</td>' +
+                '<td colspan="3" class="text-ink-2">Định mức đơn tối thiểu (MOQ): 300 - 1.000 cuộn/đơn</td>' +
+              '</tr>' +
+            '</tfoot>' +
+          '</table>' +
+        '</div>' +
+      '</div>' +
+
+      /* Bảng 2: Bảng tính Giá vốn, Giá bán theo bậc & Biên lợi nhuận ròng */
+      '<div class="card border shadow-sm">' +
+        '<div class="card-header bg-light d-flex flex-wrap gap-3 align-items-center justify-content-between">' +
+          '<div>' +
+            '<h2 class="h6 fw-bold text-dark mb-0">2. BẢNG TÍNH GIÁ VỐN, GIÁ BÁN THEO BẬC &amp; BIÊN LỢI NHUẬN RÒNG TỪNG DÒNG SẢN PHẨM</h2>' +
+            '<div class="fs-12 text-ink-2">Điền Giá vốn xuất xưởng &amp; Giá bán cơ sở Bậc 1 vào ô vàng để tự động tính lãi gộp và lãi ròng sau công nợ &amp; xe tải</div>' +
+          '</div>' +
+          '<div class="d-flex flex-wrap gap-3 align-items-center fs-13">' +
+            '<label class="d-flex align-items-center gap-2 mb-0">' +
+              '<span class="fw-semibold">Chi phí vốn lưu động (%/tháng):</span>' +
+              '<input type="number" step="0.1" min="0" class="form-control form-control-sm text-center b2b-input-yellow" style="width:82px" id="cfgCapRate" value="' + cfg.workingCapitalRateMonthly + '">' +
+            '</label>' +
+            '<label class="d-flex align-items-center gap-2 mb-0">' +
+              '<span class="fw-semibold">Cước xe tải ghép chuyến (VNĐ/cuộn):</span>' +
+              '<input type="number" step="100" min="0" class="form-control form-control-sm text-center b2b-input-yellow" style="width:95px" id="cfgTruckFee" value="' + cfg.truckFeePerRoll + '">' +
+            '</label>' +
+          '</div>' +
+        '</div>' +
+        '<div class="table-responsive">' +
+          '<table class="table table-bordered table-hover align-middle mb-0 fs-13">' +
+            '<thead class="table-light">' +
+              '<tr>' +
+                '<th>Mã SP</th>' +
+                '<th style="min-width:230px">Danh Mục Sản Phẩm Chủ Lực (Chuẩn Lõi - Đủ Yard)</th>' +
+                '<th>Nhóm Ngành Tiêu Thụ</th>' +
+                '<th class="text-end" style="width:130px">Đơn Giá Vốn Xuất Xưởng (VNĐ)</th>' +
+                '<th class="text-end" style="width:130px">Giá Bán Cơ Sở Bậc 1 (300-499c)</th>' +
+                '<th class="num">Lãi Gộp Bậc 1 (VNĐ/Cuộn)</th>' +
+                '<th class="num">Biên Lãi Gộp Bậc 1 (%)</th>' +
+                '<th class="num">Giá Bán Bậc 2 (500-799c)</th>' +
+                '<th class="num">Lãi Ròng Bậc 2 (Sau CN &amp; Xe)</th>' +
+                '<th class="num">Giá Bán Bậc 3 (800-1.000c)</th>' +
+                '<th class="num">Lãi Ròng Bậc 3 (Sau CN &amp; Xe)</th>' +
+                '<th class="text-end">Đồng bộ Web</th>' +
+              '</tr>' +
+            '</thead>' +
+            '<tbody id="b2bPricingRows">' +
+              cfg.products.map(function (item, idx) {
+                var cost = Number(item.factoryCost) || 0;
+                var p1 = Number(item.tier1BasePrice) || 0;
+                var gross1 = p1 - cost;
+                var margin1 = p1 > 0 ? ((gross1 / p1) * 100).toFixed(1) : '0.0';
+
+                var p2 = Math.round((p1 * (1 - (Number(cfg.tier2DiscountPct) || 0) / 100)) / 100) * 100;
+                var capCost2 = p2 * ((Number(cfg.workingCapitalRateMonthly) || 0) / 100) * ((Number(cfg.tier2CreditDays) || 0) / 30);
+                var net2 = Math.round(p2 - cost - (Number(cfg.truckFeePerRoll) || 0) - capCost2);
+
+                var p3 = Math.round((p1 * (1 - (Number(cfg.tier3DiscountPct) || 0) / 100)) / 100) * 100;
+                var capCost3 = p3 * ((Number(cfg.workingCapitalRateMonthly) || 0) / 100) * ((Number(cfg.tier3CreditDays) || 0) / 30);
+                var net3 = Math.round(p3 - cost - (Number(cfg.truckFeePerRoll) || 0) - capCost3);
+
+                return '<tr>' +
+                  '<td class="fw-bold text-brand">' + esc(item.code) + '</td>' +
+                  '<td class="fw-semibold">' + esc(item.name) + '</td>' +
+                  '<td class="fs-12 text-ink-2">' + esc(item.targetIndustries) + '</td>' +
+                  '<td><input type="number" step="100" class="form-control form-control-sm text-end b2b-input-yellow" data-prod-idx="' + idx + '" data-field="factoryCost" value="' + cost + '"></td>' +
+                  '<td><input type="number" step="100" class="form-control form-control-sm text-end b2b-input-yellow" data-prod-idx="' + idx + '" data-field="tier1BasePrice" value="' + p1 + '"></td>' +
+                  '<td class="num fw-bold ' + (gross1 >= 0 ? 'text-success' : 'text-danger') + '">' + U.vnd(gross1) + '</td>' +
+                  '<td class="num fw-semibold">' + margin1 + '%</td>' +
+                  '<td class="num fw-bold text-primary">' + U.vnd(p2) + '</td>' +
+                  '<td class="num fw-bold ' + (net2 >= 0 ? 'text-success' : 'text-danger') + '">' + U.vnd(net2) + '</td>' +
+                  '<td class="num fw-bold text-primary">' + U.vnd(p3) + '</td>' +
+                  '<td class="num fw-bold ' + (net3 >= 0 ? 'text-success' : 'text-danger') + '">' + U.vnd(net3) + '</td>' +
+                  '<td class="text-end">' +
+                    '<button type="button" class="btn btn-sm btn-outline-primary text-nowrap" data-sync-web="' + idx + '" title="Áp dụng 3 bậc giá sỉ (300, 500, 800 cuộn) vào sản phẩm trên Website">' +
+                      '<i class="bi bi-cloud-upload me-1"></i>Áp vào SP Web' +
+                    '</button>' +
+                  '</td>' +
+                '</tr>';
+              }).join('') +
+            '</tbody>' +
+          '</table>' +
+        '</div>' +
+      '</div>';
+
+    container.querySelectorAll('[data-tier-cfg]').forEach(function (inp) {
+      inp.addEventListener('change', function () {
+        var key = inp.getAttribute('data-tier-cfg');
+        cfg[key] = Number(inp.value) || 0;
+        Admin.b2b.savePricingConfig(cfg);
+        renderB2BPricingCalculator(container, allWebProducts);
+      });
+    });
+
+    var capInp = container.querySelector('#cfgCapRate');
+    if (capInp) {
+      capInp.addEventListener('change', function () {
+        cfg.workingCapitalRateMonthly = Number(capInp.value) || 0;
+        Admin.b2b.savePricingConfig(cfg);
+        renderB2BPricingCalculator(container, allWebProducts);
+      });
+    }
+
+    var truckInp = container.querySelector('#cfgTruckFee');
+    if (truckInp) {
+      truckInp.addEventListener('change', function () {
+        cfg.truckFeePerRoll = Number(truckInp.value) || 0;
+        Admin.b2b.savePricingConfig(cfg);
+        renderB2BPricingCalculator(container, allWebProducts);
+      });
+    }
+
+    container.querySelectorAll('[data-prod-idx]').forEach(function (inp) {
+      inp.addEventListener('change', function () {
+        var idx = Number(inp.getAttribute('data-prod-idx'));
+        var field = inp.getAttribute('data-field');
+        cfg.products[idx][field] = Number(inp.value) || 0;
+        Admin.b2b.savePricingConfig(cfg);
+        renderB2BPricingCalculator(container, allWebProducts);
+      });
+    });
+
+    container.querySelectorAll('[data-sync-web]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var idx = Number(btn.getAttribute('data-sync-web'));
+        var b2bProd = cfg.products[idx];
+        var p1 = Number(b2bProd.tier1BasePrice) || 0;
+        var p2 = Math.round((p1 * (1 - (Number(cfg.tier2DiscountPct) || 0) / 100)) / 100) * 100;
+        var p3 = Math.round((p1 * (1 - (Number(cfg.tier3DiscountPct) || 0) / 100)) / 100) * 100;
+
+        ui.modal({
+          title: 'Đồng bộ Bậc Giá Sỉ B2B sang Sản phẩm Website',
+          body:
+            '<div class="fs-13">' +
+              '<p class="mb-2">Chọn sản phẩm trên Website để áp dụng bảng giá 3 bậc MOQ từ dòng <strong>' + esc(b2bProd.code + ' — ' + b2bProd.name) + '</strong>:</p>' +
+              '<div class="bg-light p-2 rounded border mb-3">' +
+                '• <strong>Bậc 1 (300 – 499 cuộn):</strong> ' + U.vnd(p1) + '<br>' +
+                '• <strong>Bậc 2 (500 – 799 cuộn):</strong> ' + U.vnd(p2) + '<br>' +
+                '• <strong>Bậc 3 (≥ 800 cuộn):</strong> ' + U.vnd(p3) +
+              '</div>' +
+              '<label class="form-label fw-semibold">Chọn Sản phẩm trên Website:</label>' +
+              '<select class="form-select" id="syncWebProductSelect">' +
+                (allWebProducts || []).map(function (wp) {
+                  return '<option value="' + wp.id + '">#' + wp.id + ' — ' + esc(wp.name) + ' (Giá hiện tại: ' + U.vnd(wp.price) + ')</option>';
+                }).join('') +
+              '</select>' +
+            '</div>',
+          footer:
+            '<button type="button" class="btn btn-light border" data-bs-dismiss="modal">Hủy</button>' +
+            '<button type="button" class="btn btn-primary" data-confirm-sync><i class="bi bi-check2-circle me-1"></i>Cập nhật Bảng giá sỉ</button>',
+          onReady: function (body, close, modalEl) {
+            modalEl.querySelector('[data-confirm-sync]').addEventListener('click', async function () {
+              var wpId = Number(modalEl.querySelector('#syncWebProductSelect').value);
+              if (!wpId) return;
+              var newTiers = [
+                { min_quantity: 300, max_quantity: 499, price: p1 },
+                { min_quantity: 500, max_quantity: 799, price: p2 },
+                { min_quantity: 800, max_quantity: null, price: p3 }
+              ];
+              var res = await supabase.from('product').update({
+                price: p1,
+                moq: '300 cuộn',
+                price_tiers: newTiers
+              }).eq('id', wpId);
+
+              if (res.error) {
+                ui.toast('Lỗi cập nhật sản phẩm: ' + res.error.message, 'err');
+              } else {
+                ui.toast('Đã đồng bộ bảng giá sỉ 3 bậc (300 - 500 - 800 cuộn) vào sản phẩm #' + wpId + '!', 'ok');
+                close();
+              }
+            });
+          }
+        });
+      });
+    });
   }
 
   Admin.page('products', {

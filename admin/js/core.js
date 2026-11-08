@@ -85,7 +85,8 @@ window.Admin = window.Admin || {};
   });
 
   function num(n) {
-    return (typeof n === 'number' && isFinite(n)) ? nfInt.format(n) : '—';
+    var v = typeof n === 'number' ? n : (n !== '' && n != null ? Number(n) : NaN);
+    return isFinite(v) ? nfInt.format(v) : '—';
   }
 
   function vnd(n) {
@@ -195,9 +196,13 @@ window.Admin = window.Admin || {};
     }
 
     var map = {
-      ok:   { icon: 'bi-check-circle-fill', cls: 'text-success' },
-      err:  { icon: 'bi-exclamation-triangle-fill', cls: 'text-danger' },
-      warn: { icon: 'bi-exclamation-circle-fill', cls: 'text-warning' }
+      ok:      { icon: 'bi-check-circle-fill', cls: 'text-success' },
+      success: { icon: 'bi-check-circle-fill', cls: 'text-success' },
+      err:     { icon: 'bi-exclamation-triangle-fill', cls: 'text-danger' },
+      error:   { icon: 'bi-exclamation-triangle-fill', cls: 'text-danger' },
+      danger:  { icon: 'bi-exclamation-triangle-fill', cls: 'text-danger' },
+      warn:    { icon: 'bi-exclamation-circle-fill', cls: 'text-warning' },
+      warning: { icon: 'bi-exclamation-circle-fill', cls: 'text-warning' }
     };
     var m = map[type] || { icon: 'bi-info-circle-fill', cls: 'text-primary' };
 
@@ -443,7 +448,7 @@ window.Admin = window.Admin || {};
   Admin.$$ = $$;
   Admin.util = {
     esc: esc, deaccent: deaccent, debounce: debounce,
-    num: num, vnd: vnd,
+    num: num, fmtNum: num, vnd: vnd,
     dateVN: dateVN, dateTimeVN: dateTimeVN, parseDT: parseDT, nowSQL: nowSQL, ym: ym, pad: pad,
     imgTag: imgTag, FALLBACK_IMG: FALLBACK_IMG, IMG_DIR: IMG_DIR
   };

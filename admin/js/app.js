@@ -34,11 +34,11 @@
      Viết cứng ở đây chứ không suy ra từ thứ tự đăng ký, để đổi vị trí một
      mục thì sửa đúng một chỗ. */
   var NAV = [
-    { group: '',           items: ['dashboard'] },
-    { group: 'Nội dung',   items: ['carousel', 'notices', 'pages', 'testimonials'] },
-    { group: 'Bán hàng',   items: ['orders', 'products', 'categories'] },
-    { group: 'Người dùng', items: ['users', 'feedback', 'leads'] },
-    ];
+    { group: '',                items: ['dashboard'] },
+    { group: 'Bán hàng & B2B',  items: ['crm', 'orders', 'products', 'categories'] },
+    { group: 'Nội dung',        items: ['carousel', 'posts', 'notices', 'pages', 'testimonials'] },
+    { group: 'Người dùng',      items: ['users', 'feedback'] }
+  ];
 
   var DEFAULT_PAGE = 'dashboard';
 
@@ -165,6 +165,7 @@
 
   function routeName() {
     var h = (location.hash || '').replace(/^#\/?/, '').split('?')[0];
+    if (h === 'leads') return 'crm';
     return pages[h] ? h : DEFAULT_PAGE;
   }
 

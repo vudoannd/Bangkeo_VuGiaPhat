@@ -339,12 +339,6 @@
               '<input class="form-control" id="u-addr" name="address" value="' +
                 esc(u.address || '') + '">' +
             '</div>' +
-
-            '<div class="col-12"><hr class="my-1"></div>' +
-            '<div class="col-12">' +
-              '<div class="fw-semibold fs-13">' + (id ? 'Mật khẩu (Đã bỏ qua)' : 'Mật khẩu (Đã bỏ qua)') + '</div>' +
-              '<p class="fs-12 text-ink-3 mb-2">Đăng nhập được xử lý bởi Supabase Auth.</p>' +
-            '</div>' +
           '</div>' +
         '</form>',
       footer:

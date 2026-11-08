@@ -1,6 +1,22 @@
 (function() {
+  var DEFAULT_PROD_TITLE = 'Sản Xuất Băng Keo Đóng Thùng & Màng PE Quấn Hàng - Vũ Gia Phát';
+  var DEFAULT_PROD_H1 = 'Sản phẩm băng keo';
+  var DEFAULT_PROD_DESC = 'Toàn bộ mẫu băng keo đang có tại kho, phân theo chất kết dính. Dùng bộ lọc bên dưới để tìm nhanh loại bạn cần.';
+
   function updateCategorySEO(catId) {
-    if (!catId || catId === 'all') return;
+    var h1El = document.getElementById('seoH1');
+    var descTopEl = document.getElementById('seoDescTop');
+    var bottom = document.getElementById('seoContentBottom');
+    var articleEl = document.getElementById('seoArticle');
+
+    if (!catId || catId === 'all') {
+      document.title = DEFAULT_PROD_TITLE;
+      if (h1El) h1El.textContent = DEFAULT_PROD_H1;
+      if (descTopEl) descTopEl.textContent = DEFAULT_PROD_DESC;
+      if (bottom) bottom.style.display = 'none';
+      if (articleEl) articleEl.innerHTML = '';
+      return;
+    }
     
     if (typeof supabaseClient === 'undefined') {
       setTimeout(function() { updateCategorySEO(catId); }, 500);
@@ -10,11 +26,11 @@
     supabaseClient.from('category').select('*').eq('id', catId).single()
       .then(function(res) {
         var data = res.data;
-        if (data && (data.seo_title || data.seo_description || data.seo_article)) {
-          var title = data.seo_title || data.name;
-          var desc = data.seo_description || '';
+        if (data) {
+          var title = data.seo_title || data.name || DEFAULT_PROD_H1;
+          var desc = data.seo_description || data.description || DEFAULT_PROD_DESC;
           
-          document.title = title;
+          document.title = title + ' - Vũ Gia Phát';
           
           var metaDesc = document.querySelector('meta[name="description"]');
           if (metaDesc) {
@@ -26,23 +42,24 @@
             document.head.appendChild(metaDesc);
           }
 
-          var banner = document.getElementById('seoBanner');
-          if (banner) {
-            banner.style.display = 'block';
-            document.getElementById('seoH1').textContent = title;
-            document.getElementById('seoDescTop').textContent = desc;
-          }
+          if (h1El) h1El.textContent = title;
+          if (descTopEl) descTopEl.textContent = desc;
 
-          var bottom = document.getElementById('seoContentBottom');
-          if (bottom && data.seo_article) {
-            bottom.style.display = 'block';
-            document.getElementById('seoArticle').innerHTML = data.seo_article;
+          if (bottom && articleEl) {
+            if (data.seo_article) {
+              bottom.style.display = 'block';
+              articleEl.innerHTML = data.seo_article;
+            } else {
+              bottom.style.display = 'none';
+              articleEl.innerHTML = '';
+            }
           }
           
           generateCategoryJSONLD(data, title, desc);
         }
       });
   }
+  window.updateCategorySEO = updateCategorySEO;
 
   function generateCategoryJSONLD(data, title, desc) {
     var script = document.createElement('script');
@@ -182,6 +199,40 @@
           }
         }
       ]
+    };
+    var script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(schema);
+    document.head.appendChild(script);
+  };
+
+  window.generateArticleJSONLD = function(post) {
+    if (!post) return;
+    var img = post.image || 'images/logo.webp';
+    if (!/^https?:\/\//i.test(img)) {
+      img = window.location.origin + '/' + img.replace(/^\//, '');
+    }
+    var schema = {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": post.seo_title || post.title || 'Tin tức Vũ Gia Phát',
+      "description": post.seo_description || post.excerpt || '',
+      "image": [img],
+      "datePublished": post.published_at || post.created_at || new Date().toISOString(),
+      "dateModified": post.updated_at || post.published_at || post.created_at || new Date().toISOString(),
+      "author": [{
+        "@type": "Organization",
+        "name": post.author || "Vũ Gia Phát",
+        "url": window.location.origin
+      }],
+      "publisher": {
+        "@type": "Organization",
+        "name": "Vũ Gia Phát",
+        "logo": {
+          "@type": "ImageObject",
+          "url": window.location.origin + "/images/logo.webp"
+        }
+      }
     };
     var script = document.createElement('script');
     script.type = 'application/ld+json';

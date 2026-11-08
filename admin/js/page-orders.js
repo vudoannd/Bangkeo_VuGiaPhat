@@ -200,11 +200,21 @@
     return '<table class="table table-hover align-middle mb-0">' +
       '<thead><tr>' +
         '<th>Mã đơn</th><th>Khách hàng</th><th>Ngày đặt</th>' +
-        '<th class="num">Số lượng</th><th class="num">Tổng tiền</th>' +
+        '<th class="num">Số lượng &amp; Bậc B2B</th><th class="num">Tổng tiền</th>' +
         '<th style="min-width:170px">Trạng thái</th>' +
         '<th class="text-end" style="width:120px">Thao tác</th>' +
       '</tr></thead><tbody>' +
       rows.map(function (o) {
+        var tierBadge = '';
+        if (o.units >= 800) {
+          tierBadge = '<span class="badge bg-success-subtle text-success-emphasis border border-success-subtle">Bậc 3 · CN 30 ngày</span>';
+        } else if (o.units >= 500) {
+          tierBadge = '<span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle">Bậc 2 · CN 15 ngày</span>';
+        } else if (o.units >= 300) {
+          tierBadge = '<span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">Bậc 1 · COD / 7 ngày</span>';
+        } else {
+          tierBadge = '<span class="badge bg-light text-secondary border">Đơn lẻ · COD</span>';
+        }
         return '<tr data-id="' + o.id + '">' +
           '<td><button type="button" class="btn btn-link p-0 fw-bold text-decoration-none" ' +
                      'data-view="' + o.id + '">#' + o.id + '</button></td>' +
@@ -215,8 +225,8 @@
               : '<span class="text-ink-3 fst-italic fs-13">Khách đã bị xóa</span>') +
           '</td>' +
           '<td class="fs-13">' + esc(U.dateTimeVN(o.order_date)) + '</td>' +
-          '<td class="num fs-13">' + U.num(o.units) +
-            '<div class="fs-12 text-ink-3">' + o.lines + ' dòng</div></td>' +
+          '<td class="num fs-13"><div class="fw-bold">' + U.num(o.units) + ' cuộn/SP</div>' +
+            '<div class="fs-12 text-ink-3 mb-1">' + o.lines + ' dòng</div>' + tierBadge + '</td>' +
           '<td class="num fw-semibold">' + esc(U.vnd(o.total_amount)) + '</td>' +
           '<td>' +
             '<select class="form-select form-select-sm" data-st="' + o.id + '" ' +

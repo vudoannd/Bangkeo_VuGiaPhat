@@ -192,6 +192,54 @@
            '</div>';
   }
 
+  function renderB2BFunnelSection() {
+    if (!Admin.b2b) return '';
+    var records = Admin.b2b.getRecords();
+    var qMetrics = Admin.b2b.computeQuantitativeMetrics(records);
+    var riskList = records.filter(function (r) { return Admin.b2b.auditRecord(r).isRisk; });
+    var keyAccounts = Admin.b2b.getKeyAccounts(records);
+    var keyVol = keyAccounts.reduce(function (acc, k) { return acc + (Number(k.record.expectedVolume) || 0); }, 0);
+
+    return '' +
+      '<div class="card border-primary border-opacity-25 shadow-sm mb-3">' +
+        '<div class="card-header bg-brand-lighter d-flex flex-wrap gap-2 align-items-center">' +
+          '<div>' +
+            '<span class="badge bg-primary me-2">B2B CRM PIPELINE</span>' +
+            '<strong class="text-dark">TÓM TẮT PHỄU KHÁCH HÀNG B2B (BĂNG KEO OPP &amp; MÀNG PE)</strong>' +
+            '<div class="fs-12 text-ink-2 mt-1">Tuyến Quận 12 - Hóc Môn (24 KH) &amp; Tuyến Bình Dương - Bình Chánh - Long An (12 KH)</div>' +
+          '</div>' +
+          '<div class="ms-auto d-flex gap-2">' +
+            '<a href="#/crm?tab=audit" class="btn btn-sm btn-outline-danger fw-semibold"><i class="bi bi-shield-exclamation me-1"></i>Kiểm toán Công nợ (' + riskList.length + ')</a>' +
+            '<a href="#/crm" class="btn btn-sm btn-primary fw-semibold"><i class="bi bi-kanban me-1"></i>Mở Quản lý CRM B2B (36 KH)</a>' +
+          '</div>' +
+        '</div>' +
+        '<div class="card-body">' +
+          '<div class="row g-3">' +
+            tile({
+              icon: 'bi-buildings', label: 'Tổng KH Mục tiêu trong Phễu',
+              value: U.num(qMetrics.count) + ' Doanh nghiệp',
+              hint: '24 KH Q12-Hóc Môn · 12 KH BD-BC-Long An'
+            }) +
+            tile({
+              icon: 'bi-boxes', label: 'Tổng Sản lượng Tiềm năng',
+              value: U.num(qMetrics.sum) + ' cuộn/tháng', hero: true,
+              hint: 'TB (Mean): ' + qMetrics.mean + ' c/KH · Trung vị: ' + qMetrics.median + ' c'
+            }) +
+            tile({
+              icon: 'bi-trophy', label: 'Nhóm ' + keyAccounts.length + ' KH Đầu tàu (1.000c)',
+              value: U.num(keyVol) + ' cuộn/tháng',
+              hint: 'Chiếm ' + (qMetrics.sum ? ((keyVol / qMetrics.sum) * 100).toFixed(1) : 0) + '% tổng sản lượng toàn phễu'
+            }) +
+            tile({
+              icon: 'bi-exclamation-triangle', label: 'Cảnh báo Rủi ro Công nợ Bậc 1',
+              value: U.num(riskList.length) + ' Khách hàng',
+              hint: 'SL < 500c đang gán công nợ · Tiềm năng +500c/tháng'
+            }) +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  }
+
   /* ======================================================================
    * 3. VẼ TRANG
    * ====================================================================== */
@@ -208,7 +256,10 @@
       var lastLabel = series.length ? series[series.length - 1].full.toLowerCase() : '';
 
       view.innerHTML =
-        /* --- Hàng 1: bốn con số chốt --- */
+        /* --- Khối 0: Dashboard Quản trị Phễu Khách hàng B2B --- */
+        renderB2BFunnelSection() +
+
+        /* --- Hàng 1: bốn con số chốt Website --- */
         '<div class="row g-3 mb-3">' +
           tile({
             icon: 'bi-cash-stack', label: 'Doanh thu ghi nhận',

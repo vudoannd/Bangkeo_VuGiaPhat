@@ -44,8 +44,9 @@
     }
 
     var warningHtml = pages.length === 0
-      ? '<div class="alert alert-warning border-0 border-start border-4 mb-4" role="alert">' +
-          '<strong>Chưa có trang tĩnh nào.</strong> Hãy tạo bảng page và thêm dữ liệu mẫu trên Supabase.' +
+      ? '<div class="alert alert-warning border-0 border-start border-4 mb-4 d-flex align-items-center justify-content-between flex-wrap gap-2" role="alert">' +
+          '<div><strong>Chưa có trang tĩnh nào.</strong> Bạn có thể khởi tạo nhanh 3 trang chính sách mặc định vào cơ sở dữ liệu.</div>' +
+          '<button type="button" class="btn btn-sm btn-warning fw-semibold" id="btnSeedPages"><i class="bi bi-magic me-1"></i>Khởi tạo 3 trang mặc định</button>' +
         '</div>'
       : '';
 
@@ -91,6 +92,42 @@
           case 'edit': openForm(pageRecord); break;
         }
       });
+    }
+
+    var seedBtn = Admin.$('#btnSeedPages');
+    if (seedBtn) {
+      seedBtn.addEventListener('click', seedDefaultPages);
+    }
+  }
+
+  async function seedDefaultPages() {
+    var defaults = [
+      {
+        slug: 'privacy-policy',
+        title: 'Chính sách bảo mật',
+        content: '<h2>1. Cam kết bảo mật thông tin</h2><p>Vũ Gia Phát cam kết bảo vệ thông tin cá nhân (Họ tên, SĐT, Email, Địa chỉ) của quý khách hàng theo Nghị định 13/2023/NĐ-CP.</p><h2>2. Mục đích sử dụng</h2><p>Chỉ sử dụng để tư vấn báo giá sỉ/lẻ, xác nhận và giao đơn hàng băng keo, màng PE.</p>',
+        updated_at: new Date().toISOString()
+      },
+      {
+        slug: 'terms-of-service',
+        title: 'Điều khoản dịch vụ',
+        content: '<h2>1. Quy định báo giá &amp; MOQ</h2><p>Giá sỉ được áp dụng theo số lượng đặt hàng thực tế. Hỗ trợ xuất hóa đơn VAT đầy đủ.</p><h2>2. Giao hàng &amp; Thanh toán</h2><p>Giao hàng nhanh nội thành TP.HCM và gửi chành xe toàn quốc.</p>',
+        updated_at: new Date().toISOString()
+      },
+      {
+        slug: 'return-policy',
+        title: 'Chính sách đổi trả',
+        content: '<h2>1. Đổi trả miễn phí trong 7 ngày</h2><p>Hỗ trợ đổi trả 100% miễn phí trong vòng 7 ngày nếu sản phẩm lỗi từ nhà sản xuất hoặc không đúng quy cách cam kết.</p>',
+        updated_at: new Date().toISOString()
+      }
+    ];
+    try {
+      var res = await supabase.from('page').insert(defaults);
+      if (res.error) throw res.error;
+      ui.toast('Đã khởi tạo 3 trang chính sách mặc định.', 'ok');
+      Admin.reload();
+    } catch (err) {
+      ui.toast('Không thể khởi tạo: ' + (err.message || String(err)), 'err');
     }
   }
 

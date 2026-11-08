@@ -546,3 +546,162 @@ body.login-page {
 @media (prefers-reduced-motion: reduce) {
   .admin-sidebar, .admin-backdrop, .viz-tip, .boot-screen { transition: none; }
 }
+
+/* --------------------------------------------------------------------------
+   11. QUẢN TRỊ PHỄU KHÁCH HÀNG B2B & BẢNG TÍNH GIÁ VỐN (STITCH UI)
+   -------------------------------------------------------------------------- */
+.b2b-input-yellow {
+  background-color: #FEF9C3 !important;
+  border-color: #FACC15 !important;
+  font-weight: 700 !important;
+  color: #713F12 !important;
+}
+.b2b-input-yellow:focus {
+  background-color: #FEF08A !important;
+  box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.25) !important;
+}
+.b2b-pipeline-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+  gap: 0.65rem;
+}
+.b2b-pipeline-step {
+  border: 1px solid var(--hair);
+  border-radius: 0.75rem;
+  padding: 0.75rem 0.6rem;
+  background: #F8FAFC;
+  text-align: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.b2b-pipeline-step:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+}
+.b2b-pipeline-step.is-won {
+  background: #ECFDF5;
+  border-color: #A7F3D0;
+}
+.b2b-audit-risk-row {
+  background-color: #FEF2F2 !important;
+}
+.b2b-key-account-row {
+  background-color: #F0FDF4 !important;
+}
+.b2b-subnav .nav-link {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.95rem;
+}
+.b2b-subnav .nav-link.active {
+  background-color: var(--brand);
+  color: #fff;
+}
+
+/* --------------------------------------------------------------------------
+   12. BẢNG PHỄU KANBAN CRM B2B & TIMELINE CHĂM SÓC KHÁCH HÀNG 360°
+   -------------------------------------------------------------------------- */
+.admin .btn-xs {
+  padding: 0.18rem 0.5rem;
+  font-size: 0.75rem;
+  border-radius: 0.38rem;
+  line-height: 1.35;
+}
+.crm-kanban-board {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.75rem;
+  align-items: stretch;
+}
+.crm-kanban-col {
+  flex: 0 0 278px;
+  min-width: 278px;
+  background: #F8FAFC;
+  border: 1px solid var(--hair);
+  border-radius: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  max-height: 680px;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.crm-kanban-col.is-won {
+  background: #ECFDF5;
+  border-color: #A7F3D0;
+}
+.crm-kanban-col.is-drag-over {
+  background: #EFF6FF;
+  border: 2px dashed #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+.crm-kanban-head {
+  padding: 0.7rem 0.85rem;
+  border-bottom: 1px solid var(--hair);
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 0.85rem 0.85rem 0 0;
+}
+.crm-kanban-body {
+  padding: 0.65rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  flex: 1 1 auto;
+}
+.crm-deal-card {
+  background: #fff;
+  border: 1px solid var(--hair);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  box-shadow: 0 1px 2px rgba(15, 23, 32, 0.04);
+  cursor: grab;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease, opacity 0.14s ease;
+}
+.crm-deal-card:active {
+  cursor: grabbing;
+}
+.crm-deal-card.is-dragging {
+  opacity: 0.45;
+  transform: scale(0.98);
+  border: 1px dashed #2563EB;
+}
+.crm-deal-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+  border-color: #93C5FD;
+}
+.crm-deal-card.is-risk {
+  border-left: 4px solid #EF4444;
+  background: #FFFBFB;
+}
+.crm-deal-card.is-key {
+  border-left: 4px solid #10B981;
+}
+.crm-deal-card.is-overdue {
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.35);
+}
+.crm-timeline {
+  position: relative;
+  padding-left: 1.25rem;
+  border-left: 2px solid #BFDBFE;
+  margin-left: 0.5rem;
+}
+.crm-timeline-item {
+  position: relative;
+  padding-bottom: 0.85rem;
+}
+.crm-timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -1.6rem;
+  top: 0.25rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--brand);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #BFDBFE;
+}
+
+

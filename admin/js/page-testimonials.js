@@ -129,21 +129,29 @@
               '<label class="form-label fw-semibold">Công ty</label>' +
               '<input type="text" class="form-control" name="company_name" value="' + esc(record ? record.company_name : '') + '">' +
             '</div>' +
-            '<div class="col-md-4">' +
+            '<div class="col-md-3">' +
               '<label class="form-label fw-semibold">Đánh giá (sao) <span class="text-danger">*</span></label>' +
               '<input type="number" class="form-control" name="rating" min="1" max="5" value="' + (record ? record.rating : '5') + '" required>' +
             '</div>' +
-            '<div class="col-md-4 d-flex align-items-end pb-2">' +
+            '<div class="col-md-3">' +
+              '<label class="form-label fw-semibold">Thứ tự hiển thị</label>' +
+              '<input type="number" class="form-control" name="sort_order" min="0" value="' + (record && record.sort_order != null ? record.sort_order : '0') + '">' +
+            '</div>' +
+            '<div class="col-md-3 d-flex align-items-end pb-2">' +
               '<div class="form-check form-switch">' +
                 '<input class="form-check-input" type="checkbox" name="is_active" ' + (record ? (record.is_active ? 'checked' : '') : 'checked') + '>' +
                 '<label class="form-check-label">Hiển thị</label>' +
               '</div>' +
             '</div>' +
-            '<div class="col-md-4 d-flex align-items-end pb-2">' +
+            '<div class="col-md-3 d-flex align-items-end pb-2">' +
               '<div class="form-check form-switch">' +
-                '<input class="form-check-input" type="checkbox" name="is_featured" ' + (record ? (record.is_featured ? 'checked' : '') : '') + '>' +
+                '<input class="form-check-input" type="checkbox" name="is_featured" ' + (record ? (record.is_featured ? 'checked' : '') : 'checked') + '>' +
                 '<label class="form-check-label">Nổi bật</label>' +
               '</div>' +
+            '</div>' +
+            '<div class="col-12">' +
+              '<label class="form-label fw-semibold">URL Ảnh đại diện (Avatar - Tùy chọn)</label>' +
+              '<input type="text" class="form-control" name="avatar" placeholder="https://... hoặc để trống sẽ lấy chữ cái đầu" value="' + esc(record && record.avatar ? record.avatar : '') + '">' +
             '</div>' +
             '<div class="col-12">' +
               '<label class="form-label fw-semibold">Nội dung <span class="text-danger">*</span></label>' +
@@ -177,7 +185,9 @@
     var payload = {
       customer_name: customer,
       company_name: form.elements.company_name.value.trim(),
-      rating: parseInt(form.elements.rating.value) || 5,
+      rating: parseInt(form.elements.rating.value, 10) || 5,
+      sort_order: parseInt(form.elements.sort_order.value, 10) || 0,
+      avatar: form.elements.avatar.value.trim() || null,
       content: content,
       is_active: form.elements.is_active.checked,
       is_featured: form.elements.is_featured.checked

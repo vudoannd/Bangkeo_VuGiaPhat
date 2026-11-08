@@ -43,7 +43,19 @@
         window.gtag('event', eventName, params);
       }
       if (typeof window.fbq === 'function') {
-        window.fbq('trackCustom', eventName, params);
+        if (eventName === 'generate_lead') {
+          window.fbq('track', 'Lead', params);
+        } else if (eventName === 'purchase') {
+          window.fbq('track', 'Purchase', params);
+        } else if (eventName === 'add_to_cart') {
+          window.fbq('track', 'AddToCart', params);
+        } else if (eventName === 'begin_checkout') {
+          window.fbq('track', 'InitiateCheckout', params);
+        } else if (eventName === 'view_item') {
+          window.fbq('track', 'ViewContent', params);
+        } else {
+          window.fbq('trackCustom', eventName, params);
+        }
       }
     } catch (e) {
       console.warn('Lỗi tracking:', e);
@@ -272,7 +284,12 @@
                 
                 '<div class="mt-auto text-center">' +
                   '<div class="text-danger fw-bold mb-3" style="font-size:1.4rem">' + formatPrice(p.price) + '</div>' +
-                  '<button class="btn btn-sm text-white rounded-pill fw-semibold w-100" style="background-color: var(--brand);" data-quick="' + esc(p.id) + '">Xem chi tiết</button>' +
+                  '<div class="d-flex gap-2">' +
+                    '<button class="btn btn-sm text-white rounded-pill fw-semibold flex-grow-1" style="background-color: var(--brand);" data-quick="' + esc(p.id) + '">Xem chi tiết</button>' +
+                    '<button type="button" class="btn btn-sm rounded-pill compare-btn' + (isProductInCompare(p.id) ? ' active' : '') + '" data-compare="' + esc(p.id) + '" onclick="window.addToCompare(\'' + esc(p.id) + '\')" title="So sánh sản phẩm">' +
+                      '<i class="bi bi-arrow-left-right"></i> <span class="d-none d-sm-inline">So sánh</span>' +
+                    '</button>' +
+                  '</div>' +
                 '</div>' +
               '</div>' +
             '</div>' +
@@ -869,6 +886,7 @@
           c.setAttribute('aria-pressed', String(c === chip));
         });
         syncURL();
+        if (window.updateCategorySEO) window.updateCategorySEO(state.cat);
         render();
       });
     }
@@ -1116,6 +1134,18 @@
           console.error(res.error);
           toast('Đã có lỗi xảy ra. Vui lòng thử lại sau.', 'err');
         } else {
+          try {
+            sessionStorage.setItem('vgp_last_submission', JSON.stringify({
+              typeLabel: 'Form liên hệ',
+              name: record.fullname,
+              phone: record.phone,
+              quantity: record.quantity || '',
+              time: new Date().toLocaleString('vi-VN'),
+              eventType: 'generate_lead',
+              source: 'contact'
+            }));
+          } catch (e) {}
+          trackEvent('generate_lead', { source: 'contact' });
           form.reset();
           Object.keys(rules).forEach(function (name) {
             var field = form.elements[name];
@@ -1216,21 +1246,62 @@
   }
 
   function renderAnnouncementBar() {
-    var settings = window.__SETTINGS_MAP__;
-    if (settings && settings.announcement_enabled === 'true' && settings.announcement_text) {
-      var link = settings.announcement_link || '#';
-      var barHtml = 
-        '<div class="announcement-bar bg-brand-gradient text-white text-center py-2 px-3 fw-medium" style="font-size: 0.9rem; z-index: 1050; position: relative;">' +
-          '<a href="' + escapeHtml(link) + '" class="text-white text-decoration-none d-block">' +
-             escapeHtml(settings.announcement_text) +
-          '</a>' +
+    if (document.querySelector('.announcement-bar')) return;
+
+    function mountBar(idKey, textHtml, linkUrl) {
+      var storageKey = 'vgp_closed_announcement_' + idKey;
+      if (sessionStorage.getItem(storageKey) === '1') return;
+
+      var contentHtml = linkUrl
+        ? '<a href="' + escapeHtml(linkUrl) + '" class="text-dark text-decoration-none">' + textHtml + '</a>'
+        : '<span>' + textHtml + '</span>';
+
+      var barHtml =
+        '<div class="announcement-bar" id="topAnnouncementBar" role="region" aria-label="Thông báo khuyến mãi">' +
+          '<div class="container position-relative">' +
+            '<i class="bi bi-megaphone-fill me-2 text-danger"></i>' +
+            contentHtml +
+            '<button type="button" class="btn-close-announcement" id="btnCloseAnnouncement" aria-label="Đóng thông báo">' +
+              '<i class="bi bi-x-lg"></i>' +
+            '</button>' +
+          '</div>' +
         '</div>';
+
       var header = document.querySelector('header');
       if (header) {
         header.insertAdjacentHTML('beforebegin', barHtml);
       } else {
         document.body.insertAdjacentHTML('afterbegin', barHtml);
       }
+
+      var closeBtn = document.getElementById('btnCloseAnnouncement');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+          sessionStorage.setItem(storageKey, '1');
+          var bar = document.getElementById('topAnnouncementBar');
+          if (bar) bar.remove();
+        });
+      }
+    }
+
+    if (typeof supabaseClient !== 'undefined') {
+      supabaseClient
+        .from('notices')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .then(function(res) {
+          if (!res.error && res.data && res.data.length > 0) {
+            var n = res.data[0];
+            mountBar('notice_' + n.id, escapeHtml(n.title), 'products.html');
+            return;
+          }
+          var settings = window.__SETTINGS_MAP__;
+          if (settings && settings.announcement_enabled === 'true' && settings.announcement_text) {
+            mountBar('setting_bar', escapeHtml(settings.announcement_text), settings.announcement_link || '');
+          }
+        });
     }
   }
 
@@ -1240,28 +1311,41 @@
         '<div class="modal-dialog modal-dialog-centered">' +
           '<div class="modal-content">' +
             '<div class="modal-header bg-brand-gradient text-white border-0">' +
-              '<h5 class="modal-title fw-bold" id="quickQuoteModalLabel"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Báo Giá Nhanh</h5>' +
+              '<h5 class="modal-title fw-bold text-white" id="quickQuoteModalLabel"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Nhận Báo Giá Sỉ Nhanh</h5>' +
               '<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>' +
             '</div>' +
-            '<form id="quickQuoteForm">' +
+            '<form id="quickQuoteForm" novalidate>' +
               '<div class="modal-body p-4">' +
-                '<p class="small text-muted mb-4">Nhận báo giá sỉ ngay qua Zalo. Vui lòng để lại thông tin của bạn!</p>' +
+                '<p class="small text-muted mb-3">Để lại SĐT & nhu cầu của bạn, Vũ Gia Phát sẽ gửi bảng giá sỉ tốt nhất qua Zalo chỉ trong 15–30 phút!</p>' +
                 '<div class="mb-3">' +
-                  '<label for="qqPhone" class="form-label fw-semibold">Số điện thoại / Zalo <span class="text-danger">*</span></label>' +
+                  '<label for="qqPhone" class="form-label fw-semibold small">Số điện thoại / Zalo <span class="text-danger">*</span></label>' +
                   '<input type="tel" class="form-control" id="qqPhone" name="qqPhone" required placeholder="Ví dụ: 0901234567">' +
+                  '<div class="invalid-feedback">Vui lòng nhập số điện thoại hợp lệ (10–11 số).</div>' +
                 '</div>' +
                 '<div class="mb-3">' +
-                  '<label for="qqName" class="form-label fw-semibold">Họ và tên</label>' +
+                  '<label for="qqName" class="form-label fw-semibold small">Họ và tên / Công ty</label>' +
                   '<input type="text" class="form-control" id="qqName" name="qqName" placeholder="Tên của bạn (không bắt buộc)">' +
                 '</div>' +
-                '<div class="mb-3">' +
-                  '<label for="qqProduct" class="form-label fw-semibold">Sản phẩm quan tâm</label>' +
-                  '<input type="text" class="form-control" id="qqProduct" name="qqProduct" placeholder="Ví dụ: Băng keo trong, Màng PE...">' +
+                '<div class="row g-3">' +
+                  '<div class="col-sm-7">' +
+                    '<label for="qqProduct" class="form-label fw-semibold small">Sản phẩm quan tâm</label>' +
+                    '<select class="form-select" id="qqProduct" name="qqProduct">' +
+                      '<option value="Băng keo OPP Trong / Đục">Băng keo OPP Trong / Đục</option>' +
+                      '<option value="Màng PE quấn Pallet / Quấn tay">Màng PE quấn Pallet / Quấn tay</option>' +
+                      '<option value="Băng keo in Logo theo yêu cầu">Băng keo in Logo theo yêu cầu</option>' +
+                      '<option value="Băng keo màu / Băng keo giấy / 2 mặt">Băng keo màu / Giấy / 2 mặt</option>' +
+                      '<option value="Báo giá sỉ tổng hợp">Báo giá sỉ tổng hợp</option>' +
+                    '</select>' +
+                  '</div>' +
+                  '<div class="col-sm-5">' +
+                    '<label for="qqQuantity" class="form-label fw-semibold small">Số lượng dự kiến</label>' +
+                    '<input type="text" class="form-control" id="qqQuantity" name="qqQuantity" placeholder="VD: 100 cuộn">' +
+                  '</div>' +
                 '</div>' +
               '</div>' +
-              '<div class="modal-footer border-0 px-4 pb-4 justify-content-between">' +
-                '<button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Đóng</button>' +
-                '<button type="submit" class="btn btn-primary rounded-pill px-4">Nhận Báo Giá Ngay</button>' +
+              '<div class="modal-footer border-0 px-4 pb-4 pt-0 justify-content-between">' +
+                '<button type="button" class="btn btn-light border rounded-pill px-3" data-bs-dismiss="modal">Để sau</button>' +
+                '<button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold"><i class="bi bi-send me-1"></i>Nhận Báo Giá Ngay</button>' +
               '</div>' +
             '</form>' +
           '</div>' +
@@ -1271,22 +1355,34 @@
     document.body.insertAdjacentHTML('beforeend', modalHtml);
     
     var form = $('#quickQuoteForm');
-    if(form) {
+    if (form) {
       form.addEventListener('submit', function(e) {
         e.preventDefault();
-        var phone = $('#qqPhone').value.trim();
+        var phoneInput = $('#qqPhone');
+        var phone = phoneInput.value.trim();
+        var cleanPhone = phone.replace(/[\s.\-()]/g, '');
+        if (!/^(0|\+84)\d{9,10}$/.test(cleanPhone)) {
+          phoneInput.classList.add('is-invalid');
+          phoneInput.focus();
+          return;
+        }
+        phoneInput.classList.remove('is-invalid');
+
         var name = $('#qqName').value.trim();
         var product = $('#qqProduct').value.trim();
+        var quantity = $('#qqQuantity').value.trim();
         var btn = form.querySelector('button[type="submit"]');
         
         btn.disabled = true;
         btn.textContent = 'Đang gửi...';
         
         var record = {
-          name: name,
+          name: name || 'Khách yêu cầu báo giá nhanh',
           phone: phone,
           product_interest: product,
-          source: 'quick_quote_modal',
+          quantity_estimate: quantity || null,
+          source: 'quick-quote',
+          status: 'new',
           created_at: new Date().toISOString()
         };
         
@@ -1294,29 +1390,65 @@
         
         supabaseClient.from('lead').insert([record]).then(function(res) {
           btn.disabled = false;
-          btn.textContent = 'Nhận Báo Giá Ngay';
+          btn.innerHTML = '<i class="bi bi-send me-1"></i>Nhận Báo Giá Ngay';
           if (res.error) {
             console.error(res.error);
             toast('Lỗi khi gửi thông tin, vui lòng thử lại.', 'err');
           } else {
+            localStorage.setItem('vgp_quick_quote_last_shown', String(Date.now()));
+            try {
+              sessionStorage.setItem('vgp_last_submission', JSON.stringify({
+                typeLabel: 'Báo giá nhanh',
+                name: record.name,
+                phone: record.phone,
+                product: record.product_interest,
+                quantity: record.quantity_estimate || '',
+                time: new Date().toLocaleString('vi-VN'),
+                eventType: 'generate_lead',
+                source: 'quick-quote'
+              }));
+            } catch (err) {}
+            trackEvent('generate_lead', { source: 'quick-quote', product: product });
             var bsModal = bootstrap.Modal.getInstance(document.getElementById('quickQuoteModal'));
-            if(bsModal) bsModal.hide();
+            if (bsModal) bsModal.hide();
             window.location.href = 'thank-you.html';
           }
         });
       });
     }
 
-    var hasSeenModal = sessionStorage.getItem('vgp_seen_quote_modal');
-    if (!hasSeenModal && window.location.pathname.indexOf('admin') === -1) {
-      setTimeout(function() {
+    // Chỉ hiện tự động trên trang sản phẩm (products / product-detail), sau 30s hoặc cuộn 50%, không hiện lại trong 24h
+    var page = document.body.getAttribute('data-page') || '';
+    var isProductPage = (page === 'products' || page === 'product-detail');
+    var lastShown = Number(localStorage.getItem('vgp_quick_quote_last_shown') || 0);
+    var DAY_MS = 24 * 60 * 60 * 1000;
+
+    if (isProductPage && (Date.now() - lastShown > DAY_MS)) {
+      var triggered = false;
+      function showQuickQuote() {
+        if (triggered) return;
+        // Không đè lên modal khác đang mở
+        if (document.querySelector('.modal.show')) return;
         var modalEl = document.getElementById('quickQuoteModal');
         if (modalEl && typeof bootstrap !== 'undefined') {
-          var myModal = new bootstrap.Modal(modalEl);
+          triggered = true;
+          localStorage.setItem('vgp_quick_quote_last_shown', String(Date.now()));
+          var myModal = bootstrap.Modal.getOrCreateInstance(modalEl);
           myModal.show();
-          sessionStorage.setItem('vgp_seen_quote_modal', 'true');
         }
-      }, 15000); 
+      }
+
+      setTimeout(showQuickQuote, 30000);
+
+      var onScrollQuote = function() {
+        var scrollTop = window.scrollY || document.documentElement.scrollTop;
+        var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (docHeight > 200 && (scrollTop / docHeight) >= 0.5) {
+          window.removeEventListener('scroll', onScrollQuote);
+          showQuickQuote();
+        }
+      };
+      window.addEventListener('scroll', onScrollQuote, { passive: true });
     }
   }
 
@@ -1391,7 +1523,8 @@
         items.push({ product_id: productId, variant_id: variantId, quantity: qty });
       }
       saveLocal();
-      toast('Đã thêm sản phẩm vào giỏ hàng!', 'success');
+      toast('Đã thêm sản phẩm vào giỏ hàng!', 'ok');
+      trackEvent('add_to_cart', { product_id: productId, variant_id: variantId, quantity: qty });
 
       if (cartId && typeof supabaseClient !== 'undefined') {
         if (existing) {
@@ -1629,66 +1762,394 @@
   /* ======================================================================
    * 10. TRANG TĨNH (Chính sách, Điều khoản...)
    * ====================================================================== */
+  var STATIC_PAGE_FALLBACKS = {
+    'privacy-policy': {
+      title: 'Chính sách bảo mật',
+      content:
+        '<p class="lead">Vũ Gia Phát (VGP Win Win Tape) cam kết bảo vệ quyền riêng tư và thông tin cá nhân của quý khách hàng theo Nghị định 13/2023/NĐ-CP về bảo vệ dữ liệu cá nhân (PDPA).</p>' +
+        '<h4 class="fw-bold mt-4">1. Mục đích và phạm vi thu thập thông tin</h4>' +
+        '<p>Chúng tôi thu thập các thông tin cơ bản khi quý khách gửi yêu cầu báo giá, liên hệ hoặc đặt hàng trên website, bao gồm: Họ tên, Số điện thoại/Zalo, Email, Tên công ty và Địa chỉ giao hàng.</p>' +
+        '<h4 class="fw-bold mt-4">2. Phạm vi sử dụng thông tin</h4>' +
+        '<ul>' +
+          '<li>Liên hệ tư vấn thông số kỹ thuật, gửi báo giá sỉ/lẻ băng keo và màng PE.</li>' +
+          '<li>Xác nhận đơn hàng, điều phối giao hàng và xuất hóa đơn VAT theo yêu cầu.</li>' +
+          '<li>Hỗ trợ giải quyết khiếu nại, bảo hành và đổi trả sản phẩm.</li>' +
+        '</ul>' +
+        '<h4 class="fw-bold mt-4">3. Thời gian lưu trữ và bảo mật</h4>' +
+        '<p>Thông tin khách hàng được lưu trữ an toàn trên hệ thống cơ sở dữ liệu có phân quyền bảo mật (RLS) và tuyệt đối không chia sẻ cho bên thứ ba ngoài mục đích vận chuyển đơn hàng.</p>'
+    },
+    'terms-of-service': {
+      title: 'Điều khoản dịch vụ',
+      content:
+        '<p class="lead">Chào mừng quý khách đến với website chính thức của Xưởng sản xuất Băng keo &amp; Màng PE Vũ Gia Phát.</p>' +
+        '<h4 class="fw-bold mt-4">1. Quy định về báo giá và số lượng tối thiểu (MOQ)</h4>' +
+        '<ul>' +
+          '<li>Giá niêm yết trên website là giá tham khảo. Đơn hàng số lượng lớn (từ 100 cuộn hoặc theo bao/cây) được áp dụng bảng giá sỉ chiết khấu cao.</li>' +
+          '<li>Đối với băng keo in logo theo yêu cầu, số lượng đặt tối thiểu (MOQ) và chi phí trục in đồng sẽ được tư vấn cụ thể theo quy cách.</li>' +
+        '</ul>' +
+        '<h4 class="fw-bold mt-4">2. Chính sách thanh toán &amp; Giao hàng</h4>' +
+        '<ul>' +
+          '<li>Hỗ trợ thanh toán tiền mặt khi nhận hàng (COD) hoặc chuyển khoản ngân hàng (có xuất hóa đơn GTGT).</li>' +
+          '<li>Giao hàng nhanh trong 2H–24H tại nội thành TP.HCM; hỗ trợ gửi chành xe đi 63 tỉnh thành.</li>' +
+        '</ul>'
+    },
+    'return-policy': {
+      title: 'Chính sách đổi trả',
+      content:
+        '<p class="lead">Vũ Gia Phát cam kết chất lượng chuẩn số yard, độ dày màng (mic) và độ bám dính trên từng lô hàng xuất xưởng.</p>' +
+        '<h4 class="fw-bold mt-4">1. Điều kiện đổi trả miễn phí (Trong vòng 7 ngày)</h4>' +
+        '<ul>' +
+          '<li>Sản phẩm bị lỗi kỹ thuật từ nhà sản xuất (keo khô, không dính, đứt màng liên tục, lõi giấy biến dạng).</li>' +
+          '<li>Sản phẩm giao không đúng quy cách, thiếu số yard hoặc trọng lượng so với cam kết trong đơn hàng.</li>' +
+        '</ul>' +
+        '<h4 class="fw-bold mt-4">2. Quy trình xử lý đổi trả</h4>' +
+        '<p>Quý khách vui lòng chụp ảnh/quay video tình trạng sản phẩm và gửi qua Zalo kinh doanh hoặc Hotline <strong>028 3812 3456</strong>. Chúng tôi sẽ xác nhận và đổi hàng mới 100% tận nơi trong vòng 24–48 giờ làm việc mà không phát sinh bất kỳ chi phí nào.</p>'
+    }
+  };
+
   function initPage() {
     var slug = document.body.getAttribute('data-slug');
-    if (!slug || typeof supabaseClient === 'undefined') return;
+    if (!slug) return;
 
     var contentEl = $('#pageContent');
     var titleEl = $('#pageTitle');
     var breadcrumbEl = $('#breadcrumbTitle');
 
-    supabaseClient.from('pages').select('*').eq('slug', slug).eq('is_active', true).maybeSingle()
+    function applyFallback() {
+      var fb = STATIC_PAGE_FALLBACKS[slug];
+      if (fb) {
+        if (titleEl) titleEl.textContent = fb.title;
+        if (breadcrumbEl) breadcrumbEl.textContent = fb.title;
+        if (contentEl) contentEl.innerHTML = fb.content;
+        document.title = fb.title + ' - Vũ Gia Phát';
+      } else if (contentEl) {
+        contentEl.innerHTML = '<div class="alert alert-warning">Đang cập nhật nội dung.</div>';
+      }
+    }
+
+    if (typeof supabaseClient === 'undefined') {
+      applyFallback();
+      return;
+    }
+
+    supabaseClient.from('page').select('*').eq('slug', slug).maybeSingle()
       .then(function(res) {
-        if (res.error || !res.data) {
-          if (contentEl) contentEl.innerHTML = '<div class="alert alert-warning">Đang cập nhật nội dung.</div>';
+        if (res.error || !res.data || !res.data.content) {
+          applyFallback();
         } else {
           var page = res.data;
-          if (titleEl) titleEl.textContent = page.title;
-          if (breadcrumbEl) breadcrumbEl.textContent = page.title;
-          if (contentEl) contentEl.innerHTML = page.content || '<p>Nội dung trống.</p>';
-          document.title = page.title + ' - Vũ Gia Phát';
+          if (titleEl && page.title) titleEl.textContent = page.title;
+          if (breadcrumbEl && page.title) breadcrumbEl.textContent = page.title;
+          if (contentEl) contentEl.innerHTML = page.content;
+          if (page.title) document.title = page.title + ' - Vũ Gia Phát';
         }
+      })['catch'](function() {
+        applyFallback();
       });
   }
 
+  var DEFAULT_TESTIMONIALS = [
+    {
+      customer_name: 'Anh Minh Tuấn',
+      company_name: 'Kho vận thương mại Tân Bình',
+      rating: 5,
+      content: 'Xưởng giao hàng rất đúng hẹn, băng keo trong 100 yard dán thùng carton cực kỳ ăn keo, không bị đứt ngang khi kéo máy.'
+    },
+    {
+      customer_name: 'Chị Thu Hà',
+      company_name: 'Công ty Gỗ Nội Thất Bình Dương',
+      rating: 5,
+      content: 'Màng PE quấn pallet của Vũ Gia Phát có độ co giãn tốt, màng dai và đủ số kg như cam kết. Giá sỉ cạnh tranh hơn nhiều nơi.'
+    },
+    {
+      customer_name: 'Anh Hoàng Nam',
+      company_name: 'Chuỗi Shop Gia Dụng TP.HCM',
+      rating: 5,
+      content: 'Đặt in băng keo logo thương hiệu ở đây rất ưng ý, màu in sắc nét, tư vấn nhiệt tình và hỗ trợ thiết kế miễn phí.'
+    }
+  ];
+
   function initTestimonials() {
     var grid = $('#testimonialsGrid');
-    if (!grid || typeof supabaseClient === 'undefined') return;
+    if (!grid) return;
 
-    supabaseClient.from('testimonial').select('*').eq('is_active', true).order('sort_order', {ascending: true}).limit(6)
+    function renderList(list) {
+      var html = '';
+      list.forEach(function(item) {
+        var avatarHtml = item.avatar
+          ? '<img src="' + esc(item.avatar) + '" class="testimonial-avatar" alt="' + esc(item.customer_name) + '" onerror="this.onerror=null;this.style.display=\'none\'">'
+          : '<div class="testimonial-avatar bg-brand d-flex align-items-center justify-content-center text-white fw-bold fs-4">' + esc((item.customer_name || 'K').charAt(0)) + '</div>';
+        var starsHtml = '';
+        var rating = Number(item.rating) || 5;
+        for (var i = 0; i < 5; i++) {
+          starsHtml += '<i class="bi bi-star' + (i < rating ? '-fill text-warning' : ' text-muted opacity-25') + '"></i> ';
+        }
+
+        html += '<div class="col-md-6 col-lg-4">';
+        html += '<div class="testimonial-card d-flex flex-column">';
+        html += '<div class="mb-3">' + starsHtml + '</div>';
+        html += '<div class="fst-italic text-body-secondary flex-grow-1 mb-4">"' + esc(item.content) + '"</div>';
+        html += '<div class="d-flex align-items-center mt-auto pt-3 border-top">';
+        html += avatarHtml;
+        html += '<div>';
+        html += '<h6 class="fw-bold mb-0">' + esc(item.customer_name) + '</h6>';
+        if (item.company_name) {
+          html += '<small class="text-muted">' + esc(item.company_name) + '</small>';
+        }
+        html += '</div></div></div></div>';
+      });
+      grid.innerHTML = html;
+    }
+
+    if (typeof supabaseClient === 'undefined') {
+      renderList(DEFAULT_TESTIMONIALS);
+      return;
+    }
+
+    supabaseClient
+      .from('testimonial')
+      .select('*')
+      .eq('is_active', true)
+      .order('is_featured', { ascending: false })
+      .order('sort_order', { ascending: true })
+      .limit(6)
       .then(function(res) {
         if (res.error || !res.data || res.data.length === 0) {
-          grid.innerHTML = '<div class="col-12 text-center text-muted py-5">Đang cập nhật đánh giá.</div>';
+          renderList(DEFAULT_TESTIMONIALS);
+          return;
+        }
+        var featured = res.data.filter(function(t) { return t.is_featured; });
+        renderList(featured.length >= 3 ? featured : res.data);
+      })['catch'](function() {
+        renderList(DEFAULT_TESTIMONIALS);
+      });
+  }
+
+  function isProductInCompare(id) {
+    try {
+      var list = JSON.parse(localStorage.getItem('compareList')) || [];
+      return list.map(Number).indexOf(Number(id)) !== -1;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function initCompareGlobal() {
+    if (typeof window.addToCompare === 'function') {
+      if (typeof window.updateCompareBadges === 'function') window.updateCompareBadges();
+      return;
+    }
+    var STORAGE_KEY = 'compareList';
+    var MAX_COMPARE = 4;
+
+    function getList() {
+      try {
+        var list = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        return Array.isArray(list) ? list.map(Number).filter(Boolean) : [];
+      } catch (e) { return []; }
+    }
+
+    function syncBadges() {
+      var list = getList();
+      $$('#compareCount').forEach(function(b) {
+        b.textContent = list.length;
+        b.classList.toggle('d-none', list.length === 0);
+      });
+      $$('[data-compare]').forEach(function(btn) {
+        var id = Number(btn.getAttribute('data-compare'));
+        var active = list.indexOf(id) !== -1;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-pressed', String(active));
+      });
+    }
+
+    window.getCompareList = getList;
+    window.updateCompareBadges = syncBadges;
+    window.addToCompare = function(id) {
+      var numId = Number(id);
+      if (!numId) return;
+      var list = getList();
+      var idx = list.indexOf(numId);
+      if (idx !== -1) {
+        list.splice(idx, 1);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        syncBadges();
+        toast('Đã xóa khỏi danh sách so sánh.', 'info');
+      } else {
+        if (list.length >= MAX_COMPARE) {
+          toast('Chỉ có thể so sánh tối đa ' + MAX_COMPARE + ' sản phẩm cùng lúc.', 'err');
+          return;
+        }
+        list.push(numId);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        syncBadges();
+        toast('Đã thêm vào so sánh (' + list.length + '/' + MAX_COMPARE + '). Bấm biểu tượng So sánh trên thanh menu để xem.', 'ok');
+      }
+      if (typeof window.renderCompareTable === 'function') window.renderCompareTable();
+    };
+    window.removeFromCompare = function(id) {
+      var numId = Number(id);
+      var list = getList().filter(function(item) { return item !== numId; });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      syncBadges();
+      if (typeof window.renderCompareTable === 'function') window.renderCompareTable();
+    };
+    window.clearCompare = function() {
+      localStorage.setItem(STORAGE_KEY, '[]');
+      syncBadges();
+      if (typeof window.renderCompareTable === 'function') window.renderCompareTable();
+    };
+
+    syncBadges();
+  }
+
+  function setCookie(name, value, days) {
+    var d = new Date();
+    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+    document.cookie = name + '=' + encodeURIComponent(value) + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
+  }
+
+  function getCookie(name) {
+    var nameEQ = name + '=';
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+      var c = ca[i].trim();
+      if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length));
+    }
+    return null;
+  }
+
+  function renderLeadMagnetPopup() {
+    var COOKIE_KEY = 'vgp_lead_magnet_seen';
+    if (getCookie(COOKIE_KEY) || localStorage.getItem(COOKIE_KEY)) {
+      var savedTs = Number(localStorage.getItem(COOKIE_KEY) || 0);
+      if (getCookie(COOKIE_KEY) || (Date.now() - savedTs < 7 * 24 * 60 * 60 * 1000)) {
+        return;
+      }
+    }
+
+    var page = document.body.getAttribute('data-page') || '';
+    if (page === 'thank-you' || window.location.pathname.indexOf('admin') !== -1) return;
+
+    setTimeout(function() {
+      if (document.querySelector('.modal.show') || document.getElementById('leadMagnetOverlay')) return;
+
+      var html =
+        '<div class="lead-magnet-overlay" id="leadMagnetOverlay" role="dialog" aria-modal="true" aria-labelledby="leadMagnetTitle">' +
+          '<div class="lead-magnet-popup">' +
+            '<div class="bg-brand-gradient text-white p-4 text-center position-relative">' +
+              '<button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" id="btnCloseLeadMagnet" aria-label="Đóng"></button>' +
+              '<span class="badge bg-warning text-dark fw-bold rounded-pill px-3 py-1 mb-2"><i class="bi bi-gift-fill me-1"></i>ƯU ĐÃI KHÁCH MỚI</span>' +
+              '<h4 class="fw-bold mb-1" id="leadMagnetTitle">Giảm Ngay 5% Đơn Đầu Tiên</h4>' +
+              '<p class="small mb-0 opacity-75">Nhận bảng báo giá sỉ băng keo &amp; màng PE xuất xưởng mới nhất</p>' +
+            '</div>' +
+            '<form id="leadMagnetForm" class="p-4" novalidate>' +
+              '<div class="mb-3">' +
+                '<label for="lmPhone" class="form-label small fw-semibold">Số điện thoại nhận báo giá (Zalo) <span class="text-danger">*</span></label>' +
+                '<input type="tel" class="form-control" id="lmPhone" required placeholder="Nhập SĐT của bạn (VD: 0901234567)">' +
+                '<div class="invalid-feedback">Vui lòng nhập số điện thoại hợp lệ (10–11 số).</div>' +
+              '</div>' +
+              '<div class="mb-3">' +
+                '<label for="lmEmail" class="form-label small fw-semibold">Email nhận catalog (Tùy chọn)</label>' +
+                '<input type="email" class="form-control" id="lmEmail" placeholder="ten@congty.com">' +
+              '</div>' +
+              '<button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold" id="btnSubmitLeadMagnet">' +
+                '<i class="bi bi-send-check-fill me-1"></i>Nhận Báo Giá Sỉ + Ưu Đãi 5%' +
+              '</button>' +
+              '<div class="text-center mt-2">' +
+                '<button type="button" class="btn btn-link btn-sm text-muted text-decoration-none" id="btnSkipLeadMagnet">Không, cảm ơn</button>' +
+              '</div>' +
+            '</form>' +
+          '</div>' +
+        '</div>';
+
+      document.body.insertAdjacentHTML('beforeend', html);
+
+      function markSeenAndClose() {
+        setCookie(COOKIE_KEY, '1', 7);
+        localStorage.setItem(COOKIE_KEY, String(Date.now()));
+        var el = document.getElementById('leadMagnetOverlay');
+        if (el) el.remove();
+      }
+
+      $('#btnCloseLeadMagnet').addEventListener('click', markSeenAndClose);
+      $('#btnSkipLeadMagnet').addEventListener('click', markSeenAndClose);
+      $('#leadMagnetOverlay').addEventListener('click', function(e) {
+        if (e.target.id === 'leadMagnetOverlay') markSeenAndClose();
+      });
+
+      $('#leadMagnetForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var phoneEl = $('#lmPhone');
+        var emailEl = $('#lmEmail');
+        var phone = phoneEl.value.trim();
+        var email = emailEl.value.trim();
+
+        if (!/^(0|\+84)\d{9,10}$/.test(phone.replace(/[\s.\-()]/g, ''))) {
+          phoneEl.classList.add('is-invalid');
+          phoneEl.focus();
+          return;
+        }
+        phoneEl.classList.remove('is-invalid');
+
+        var btn = $('#btnSubmitLeadMagnet');
+        btn.disabled = true;
+        btn.textContent = 'Đang gửi...';
+
+        var payload = {
+          name: 'Khách nhận ưu đãi 5% (Popup)',
+          phone: phone,
+          email: email || null,
+          source: 'popup',
+          product_interest: 'Ưu đãi 5% đơn đầu + Báo giá sỉ',
+          status: 'new',
+          created_at: new Date().toISOString()
+        };
+
+        if (typeof supabaseClient === 'undefined') {
+          markSeenAndClose();
           return;
         }
 
-        var html = '';
-        res.data.forEach(function(item) {
-          var avatarHtml = item.avatar ? '<img src="'+esc(item.avatar)+'" class="testimonial-avatar" alt="Avatar">' : '<div class="testimonial-avatar bg-brand d-flex align-items-center justify-content-center text-white fw-bold fs-4">' + item.customer_name.charAt(0) + '</div>';
-          var starsHtml = '';
-          for (var i = 0; i < 5; i++) {
-            starsHtml += '<i class="bi bi-star' + (i < item.rating ? '-fill text-warning' : ' text-muted opacity-25') + '"></i> ';
+        supabaseClient.from('lead').insert([payload]).then(function(res) {
+          markSeenAndClose();
+          if (res.error) {
+            console.error(res.error);
+            toast('Không gửi được thông tin, vui lòng thử lại sau.', 'err');
+          } else {
+            try {
+              sessionStorage.setItem('vgp_last_submission', JSON.stringify({
+                typeLabel: 'Ưu đãi 5% Khách mới',
+                name: payload.name,
+                phone: payload.phone,
+                product: payload.product_interest,
+                time: new Date().toLocaleString('vi-VN'),
+                eventType: 'generate_lead',
+                source: 'popup'
+              }));
+            } catch (err) {}
+            trackEvent('generate_lead', { source: 'popup' });
+            window.location.href = 'thank-you.html';
           }
-
-          html += '<div class="col-md-6 col-lg-4">';
-          html += '<div class="testimonial-card d-flex flex-column">';
-          html += '<div class="mb-3">' + starsHtml + '</div>';
-          html += '<div class="fst-italic text-body-secondary flex-grow-1 mb-4">"' + esc(item.content) + '"</div>';
-          html += '<div class="d-flex align-items-center mt-auto pt-3 border-top">';
-          html += avatarHtml;
-          html += '<div>';
-          html += '<h6 class="fw-bold mb-0">' + esc(item.customer_name) + '</h6>';
-          if (item.company_name) {
-            html += '<small class="text-muted">' + esc(item.company_name) + '</small>';
-          }
-          html += '</div></div></div></div>';
         });
-        grid.innerHTML = html;
       });
+    }, 10000);
+  }
+
+  function registerServiceWorker() {
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('sw.js')['catch'](function(err) {
+          console.warn('ServiceWorker registration skipped:', err);
+        });
+      });
+    }
   }
 
   function boot() {
     CartManager.init();
+    initCompareGlobal();
+    registerServiceWorker();
     var page = document.body.getAttribute('data-page') || '';
 
     initHeader();
@@ -1696,6 +2157,7 @@
     initReveal();
     initFloatingWidgets();
     renderQuickQuoteModal();
+    renderLeadMagnetPopup();
     loadSettings();
     initNewsBoard();
 
@@ -1858,6 +2320,7 @@
 
     // Render giỏ hàng lúc đầu
     renderCart();
+    trackEvent('begin_checkout');
 
     // Xử lý chốt đơn
     if (form) {
@@ -1878,71 +2341,71 @@
         var cAddress = $('#cAddress').value.trim();
         var cNote = $('#cNote').value.trim();
         var totalAmount = 0;
+        var summaryItemsText = [];
         
         items.forEach(function(it) {
           var prod = byId[it.product_id];
-          if(prod) {
+          if (prod) {
             totalAmount += (parseFloat(prod.price) || 0) * it.quantity;
+            summaryItemsText.push((prod.title || prod.name) + ' (x' + it.quantity + ')');
           }
         });
 
-        // 1. Lưu order vào Supabase
-        supabaseClient.from('orders').insert({
-          customer_name: cName,
-          customer_phone: cPhone,
-          customer_address: cAddress,
-          customer_note: cNote,
-          total_amount: totalAmount,
-          session_id: CartManager.getSessionId()
+        function finishCheckout(orderId) {
+          try {
+            sessionStorage.setItem('vgp_last_submission', JSON.stringify({
+              typeLabel: 'Đơn đặt hàng',
+              orderId: orderId || ('VGP' + String(Date.now()).slice(-6)),
+              name: cName,
+              phone: cPhone,
+              product: summaryItemsText.join(', '),
+              total: formatMoney(totalAmount),
+              totalValue: totalAmount,
+              time: new Date().toLocaleString('vi-VN'),
+              eventType: 'purchase',
+              source: 'cart'
+            }));
+          } catch (err) {}
+          CartManager.clear();
+          window.location.href = 'thank-you.html';
+        }
+
+        // Lưu đơn hàng vào bảng `order` & `order_item` (chuẩn Schema), đồng thời lưu lead dự phòng
+        supabaseClient.from('order').insert({
+          order_date: new Date().toISOString(),
+          status: 'pending',
+          total_amount: totalAmount
         }).select('id').single().then(function(resOrder) {
-          if (resOrder.error) {
-            console.error(resOrder.error);
-            alert("Có lỗi xảy ra khi tạo đơn hàng. Hãy thử lại!");
-            btnSubmit.disabled = false;
-            btnSubmit.innerHTML = '<i class="bi bi-send-fill"></i> Đặt hàng qua Zalo';
-            return;
-          }
-
-          var orderId = resOrder.data.id;
-          
-          // 2. Lưu order items
-          var orderItemsData = items.map(function(it) {
-            var prod = byId[it.product_id];
-            return {
-              order_id: orderId,
-              product_id: it.product_id,
-              variant_id: it.variant_id,
-              quantity: it.quantity,
-              price: prod ? (parseFloat(prod.price) || 0) : 0
-            };
-          });
-
-          supabaseClient.from('order_items').insert(orderItemsData).then(function(resItems) {
-            // 3. Tạo mẫu tin nhắn Zalo
-            var zaloPhone = "02838123456"; // Mặc định nếu cần, có thể thay đổi
-            var hotlineEl = document.querySelector('[data-setting-text="hotline1"]');
-            if (hotlineEl) zaloPhone = hotlineEl.textContent.replace(/[^0-9]/g, '');
-
-            var msg = "Xin chào VŨ GIA PHÁT,\n\nTôi muốn đặt đơn hàng mã #" + orderId + ".\n";
-            msg += "- Tên: " + cName + "\n";
-            msg += "- SĐT: " + cPhone + "\n";
-            if (cAddress) msg += "- Địa chỉ: " + cAddress + "\n";
-            if (cNote) msg += "- Ghi chú: " + cNote + "\n\n";
-            msg += "Chi tiết giỏ hàng:\n";
-            items.forEach(function(it) {
+          if (!resOrder.error && resOrder.data) {
+            var orderId = resOrder.data.id;
+            var orderItemsData = items.map(function(it) {
               var prod = byId[it.product_id];
-              var pName = prod ? prod.name : ("SP ID: " + it.product_id);
-              msg += "+ " + pName + (it.variant_id ? " (" + it.variant_id + ")" : "") + " x" + it.quantity + "\n";
+              var unitPrice = prod ? (parseFloat(prod.price) || 0) : 0;
+              return {
+                order_id: orderId,
+                product_id: it.product_id,
+                quantity: it.quantity,
+                unit_price: unitPrice,
+                subtotal: unitPrice * it.quantity
+              };
             });
-            msg += "\nTổng tiền tạm tính: " + formatMoney(totalAmount);
-            
-            CartManager.clear();
-            
-            // Redirect sang thank-you.html (vẫn có thể mở zalo ở tab khác nếu cần, nhưng tốt nhất redirect thẳng)
-            // Lựa chọn: Nếu có link zalo thì chuyển sang zalo, nhưng task yêu cầu:
-            // "Update submitContactForm() and submitOrder() to redirect to thank-you.html."
-            window.location.href = 'thank-you.html';
-          });
+            supabaseClient.from('order_item').insert(orderItemsData).then(function() {
+              finishCheckout(orderId);
+            });
+          } else {
+            // Fallback lưu vào bảng `lead` nếu khách vãng lai chưa có user_id trong bảng `order`
+            supabaseClient.from('lead').insert([{
+              name: cName,
+              phone: cPhone,
+              product_interest: summaryItemsText.join('; '),
+              quantity_estimate: (cAddress ? 'Đ/c: ' + cAddress : '') + (cNote ? ' | Ghi chú: ' + cNote : ''),
+              source: 'cart-checkout',
+              status: 'new',
+              created_at: new Date().toISOString()
+            }]).then(function() {
+              finishCheckout('VGP' + String(Date.now()).slice(-6));
+            });
+          }
         });
       });
     }
@@ -1950,6 +2413,7 @@
 
   // Expose for external scripts like product-detail.js
   window.esc = esc;
+  window.toast = toast;
   window.formatPrice = formatPrice;
   window.productCardHTML = productCardHTML;
   window.FALLBACK_IMG = FALLBACK_IMG;
