@@ -2,6 +2,13 @@
 <html lang="vi">
 
 <head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+  <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description"
@@ -16,7 +23,11 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body data-page="home">
+<body data-page="post">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
 
   <a class="skip-link" href="#main">Bỏ qua, đến nội dung chính</a>
 
@@ -24,15 +35,24 @@
 
   <main class="py-5" id="postMain">
       <div class="container">
+        <nav aria-label="Đường dẫn" class="mb-4">
+          <ol class="breadcrumb small mb-0">
+            <li class="breadcrumb-item"><a class="link-dark text-decoration-none" href="index.html">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a class="link-dark text-decoration-none" href="blog.html">Tin tức &amp; Cẩm nang</a></li>
+            <li class="breadcrumb-item active text-brand fw-medium" aria-current="page" id="bcPostTitle">Đang tải...</li>
+          </ol>
+        </nav>
+
         <div class="row g-5">
           
           <!-- Cột Chính (Nội dung) -->
           <div class="col-lg-8">
             <article class="bg-white border rounded p-4 p-md-5 shadow-sm">
+              <span class="badge bg-primary-subtle text-primary-emphasis mb-2" id="postCategoryTag">Kiến thức đóng gói</span>
               <h1 class="fw-bold mb-3" id="postTitle" style="color: var(--brand);">Đang tải bài viết...</h1>
-              <div class="d-flex gap-3 text-muted small mb-4 pb-3 border-bottom">
+              <div class="d-flex flex-wrap gap-3 text-muted small mb-4 pb-3 border-bottom">
                 <span><i class="bi bi-calendar3 me-1"></i><span id="postDate">-</span></span>
-                <span><i class="bi bi-person me-1"></i>Vũ Gia Phát</span>
+                <span><i class="bi bi-person me-1"></i><span id="postAuthor">Vũ Gia Phát</span></span>
               </div>
               
               <div class="ck-content" id="postContent" style="font-size: 1.1rem; line-height: 1.8;">
@@ -85,67 +105,7 @@
     <script src="js/post.js"></script>
 
 <!-- ============================ FOOTER ============================ -->
-    <footer class="site-footer text-white pt-5" style="background-color: var(--brand);">
-      <div class="container">
-        <div class="row g-4 pb-4">
-  
-          <div class="col-md-6 col-lg-3">
-            <h4 class="text-white text-uppercase fs-6 mb-3 fw-bold">Thông tin liên hệ</h4>
-            <ul class="list-unstyled small d-flex flex-column gap-3">
-              <li class="d-flex gap-2 align-items-center">
-                <i class="bi bi-telephone"></i>
-                <a href="tel:02838123456" class="text-white text-decoration-none" data-setting-href="hotline1" data-setting-prefix="tel:" data-setting-text="hotline1">028 3812 3456</a>
-              </li>
-              <li class="d-flex gap-2 align-items-center">
-                <i class="bi bi-envelope"></i>
-                <a href="mailto:info@vugiaphat.vn" class="text-white text-decoration-none" data-setting-href="email1" data-setting-prefix="mailto:" data-setting-text="email1">info@vugiaphat.vn</a>
-              </li>
-              <li class="d-flex gap-2 align-items-center">
-                <i class="bi bi-globe"></i>
-                <a href="#" class="text-white text-decoration-none">www.giaphat.com.vn</a>
-              </li>
-            </ul>
-          </div>
-  
-          <div class="col-md-6 col-lg-3">
-            <h4 class="text-white text-uppercase fs-6 mb-3 fw-bold">Địa chỉ</h4>
-            <ul class="list-unstyled small d-flex flex-column gap-3">
-              <li class="d-flex gap-2">
-                <i class="bi bi-geo-alt mt-1"></i>
-                <span data-setting-text="address">123 Đuờng Tân Thới Hiệp, Quận 12, TP.HCM</span>
-              </li>
-            </ul>
-          </div>
-  
-          <div class="col-6 col-lg-3">
-            <h4 class="text-white text-uppercase fs-6 mb-3 fw-bold">Liên kết nhanh</h4>
-            <ul class="list-unstyled small d-flex flex-column gap-2">
-              <li><a href="index.html" class="text-white text-decoration-none">Sơ đồ trang</a></li>
-              <li><a href="products.html" class="text-white text-decoration-none">Sản phẩm</a></li>
-              <li><a href="contact.html" class="text-white text-decoration-none">Liên hệ</a></li>
-              <li><a href="blog.html" class="text-white text-decoration-none">Tin tức & Sự kiện</a></li>
-            </ul>
-          </div>
-  
-          <div class="col-6 col-lg-3">
-            <h4 class="text-white text-uppercase fs-6 mb-3 fw-bold">Chính sách</h4>
-            <ul class="list-unstyled small d-flex flex-column gap-2">
-              <li><a href="#" class="text-white text-decoration-none">Chính sách bảo mật</a></li>
-              <li><a href="#" class="text-white text-decoration-none">Điều khoản dịch vụ</a></li>
-              <li><a href="#" class="text-white text-decoration-none">Chính sách đổi trả</a></li>
-            </ul>
-          </div>
-  
-        </div>
-  
-        <div class="border-top border-light border-opacity-25 py-3 text-start small">
-          Copyright 2024 GIA PHÁT
-        </div>
-      </div>
-    </footer>
-
-  
-  </div>
+  <script src="js/footer.js"></script>
 
   <button type="button" class="btn btn-primary to-top" aria-label="Lên đầu trang">
     <i class="bi bi-arrow-up"></i>
@@ -155,9 +115,6 @@
   <!-- Supabase JS Client & Cấu hình -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
-
-  <!-- Bản nhúng dự phòng cuối cùng: dùng khi mở trang bằng file:// (CORS chặn fetch) -->
-
   <script src="js/main.js"></script>
 </body>
 

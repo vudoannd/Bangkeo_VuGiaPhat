@@ -3,17 +3,20 @@
 
 <head>
   <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
-<!-- End Google Tag Manager -->
+  <script>(function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({
+        'gtm.start':
+          new Date().getTime(), event: 'gtm.js'
+      }); var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+          'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-XXXXXXX');</script>
+  <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description"
-    content="VGP Win Win Tape.Xưởng sản xuất băng keo đóng thùng, phân phối sỉ màng PE quấn hàng giá rẻ. Đảm bảo đúng chuẩn số yard và độ dày màng. Nhận sản xuất băng keo in logo.">
-  <title>Chi tiết Sản phẩm -Vũ Gia Phát</title>
+    content="VGP Win Win Tape. Xưởng sản xuất băng keo đóng thùng, phân phối sỉ màng PE quấn hàng giá rẻ. Đảm bảo đúng chuẩn số yard và độ dày màng. Nhận sản xuất băng keo in logo.">
+  <title>Chi tiết Sản phẩm - Vũ Gia Phát</title>
   <link rel="icon" href="images/logo.webp" type="image/png">
 
   <!-- Bootstrap 5 + Bootstrap Icons qua CDN -->
@@ -23,251 +26,914 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body data-page="product-detail">
+<body data-page="product-detail" class="bg-body-tertiary">
   <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
 
-  <a class="skip-link" href="#main">Bỏ qua, đến nội dung chính</a>
+  <a class="skip-link" href="#productDetailMain">Bỏ qua, đến nội dung chính</a>
 
   <script src="js/header.js"></script>
 
-  <main class="py-5" id="productDetailMain">
+  <main class="py-4" id="productDetailMain">
     <div class="container">
+      <!-- Breadcrumb -->
       <nav aria-label="Đường dẫn">
-        <ol class="breadcrumb small mb-4">
+        <ol class="breadcrumb small mb-3">
           <li class="breadcrumb-item"><a class="link-dark text-decoration-none" href="index.html">Trang chủ</a></li>
           <li class="breadcrumb-item"><a class="link-dark text-decoration-none" href="products.html">Sản phẩm</a></li>
-          <li class="breadcrumb-item active text-brand fw-medium" aria-current="page" id="bcProductName">Đang tải...</li>
+          <li class="breadcrumb-item"><a class="link-dark text-decoration-none" href="products.html"
+              id="bcCategoryLink">Băng keo &amp; Đóng gói</a></li>
+          <li class="breadcrumb-item active text-brand fw-medium" aria-current="page" id="bcProductName">Đang tải...
+          </li>
         </ol>
       </nav>
-      <div class="row g-5" id="productDetailContainer">
 
-        <!-- Trái: Gallery -->
-        <div class="col-lg-6">
-          <div id="productGallery" class="carousel slide mb-3 border rounded bg-white p-3 shadow-sm"
-            data-bs-ride="false">
-            <div class="carousel-inner" id="galleryInner" style="aspect-ratio: 1;">
-              <div class="carousel-item active h-100">
-                <div class="skeleton h-100"></div>
+      <!-- ========================== HERO 3 CỘT CHUẨN B2B WHOLESALE ========================== -->
+      <div class="bg-white border rounded-4 p-3 p-lg-4 shadow-sm mb-4">
+        <div class="row g-4" id="productDetailContainer">
+
+          <!-- CỘT 1 (TRÁI): THUMBNAILS DỌC + ẢNH CHÍNH + THẺ UY TÍN XƯỞNG -->
+          <div class="col-lg-5">
+            <div class="pd-gallery-layout mb-3">
+              <!-- Thumbnails dọc -->
+              <div class="pd-thumbs-vertical" id="galleryThumbs">
+                <div class="skeleton rounded" style="width: 64px; height: 64px;"></div>
+                <div class="skeleton rounded" style="width: 64px; height: 64px;"></div>
+                <div class="skeleton rounded" style="width: 64px; height: 64px;"></div>
+              </div>
+
+              <!-- Ảnh chính Carousel -->
+              <div class="pd-main-carousel">
+                <div id="productGallery" class="carousel slide border rounded-3 bg-white p-2 position-relative"
+                  data-bs-ride="false">
+                  <span class="badge bg-danger position-absolute top-0 start-0 m-2 z-2 shadow-sm">Giá sỉ tận
+                    xưởng</span>
+                  <div class="carousel-inner" id="galleryInner" style="aspect-ratio: 1;">
+                    <div class="carousel-item active h-100">
+                      <div class="skeleton h-100"></div>
+                    </div>
+                  </div>
+                  <button class="carousel-control-prev" type="button" data-bs-target="#productGallery"
+                    data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                    <span class="visually-hidden">Trước</span>
+                  </button>
+                  <button class="carousel-control-next" type="button" data-bs-target="#productGallery"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                    <span class="visually-hidden">Sau</span>
+                  </button>
+                </div>
               </div>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#productGallery" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#productGallery" data-bs-slide="next">
-              <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button>
-          </div>
-          <!-- Thumbnails -->
-          <div class="d-flex gap-2 overflow-auto pb-2" id="galleryThumbs">
-            <div class="skeleton" style="width: 80px; height: 80px;"></div>
-            <div class="skeleton" style="width: 80px; height: 80px;"></div>
-          </div>
-        </div>
 
-        <!-- Phải: Thông tin & Báo giá -->
-        <div class="col-lg-6">
-          <span class="badge bg-primary-subtle text-primary-emphasis mb-2" id="pdCategory">Đang tải...</span>
-          <h1 class="fw-bold text-dark mb-3" id="pdTitle" style="color: var(--brand);">Đang tải sản phẩm...</h1>
-
-          <div class="d-flex align-items-center gap-3 mb-4">
-            <div id="pdRating" class="text-warning"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i></div>
-            <span class="text-muted small">| Tình trạng: <span id="pdStock" class="text-success fw-bold">Còn
-                hàng</span></span>
+            <!-- Thẻ Xác thực Nhà sản xuất (Verified Supplier Mini Card) -->
+            <div class="pd-supplier-mini-card" id="pdSupplierMiniCard">
+              <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                <span class="pd-verified-badge"><i class="bi bi-patch-check-fill"></i> Verified Manufacturer</span>
+                <span class="small fw-semibold text-primary">10+ Năm Kinh Nghiệm</span>
+              </div>
+              <div class="fw-bold text-dark mb-1">CÔNG TY TNHH SX - TM VŨ GIA PHÁT</div>
+              <div class="small text-secondary mb-2">
+                <i class="bi bi-geo-alt-fill text-danger me-1"></i>Xưởng sản xuất trực tiếp tại TP. Hồ Chí Minh • Cung
+                ứng toàn quốc
+              </div>
+              <div class="row g-2 text-center bg-white rounded-3 p-2 border small">
+                <div class="col-4 border-end">
+                  <div class="fw-bold text-dark">99.4%</div>
+                  <div class="text-muted" style="font-size:0.7rem">Giao đúng hẹn</div>
+                </div>
+                <div class="col-4 border-end">
+                  <div class="fw-bold text-dark">≤ 15 phút</div>
+                  <div class="text-muted" style="font-size:0.7rem">Tốc độ báo giá</div>
+                </div>
+                <div class="col-4">
+                  <div class="fw-bold text-success">100%</div>
+                  <div class="text-muted" style="font-size:0.7rem">Đúng số Yard</div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <!-- Giá -->
-          <div class="mb-4 d-none" id="priceTiersContainer">
-            <h6 class="fw-bold mb-2">Bảng giá sỉ (Tham khảo)</h6>
-            <div class="table-responsive">
-              <table class="table table-sm table-bordered text-center mb-0 price-tiers-table">
+          <!-- CỘT 2 (GIỮA): THÔNG TIN SẢN PHẨM, BẬC GIÁ SỈ, BIẾN THỂ & THỜI GIAN GIAO -->
+          <div class="col-lg-4">
+            <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+              <span class="badge bg-primary-subtle text-primary-emphasis" id="pdCategory">Đang tải...</span>
+              <span class="badge bg-success-subtle text-success-emphasis"><i class="bi bi-Award me-1"></i>Chuẩn ISO /
+                Xuất khẩu</span>
+            </div>
+
+            <h1 class="h4 fw-bold text-dark mb-2 lh-base" id="pdTitle">Đang tải sản phẩm...</h1>
+
+            <div class="d-flex align-items-center flex-wrap gap-2 mb-3 pb-2 border-bottom small">
+              <div id="pdRating" class="text-warning">
+                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                  class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+              </div>
+              <a href="#sec-reviews" class="text-decoration-none fw-bold text-dark">4.9</a>
+              <a href="#sec-reviews" class="text-muted text-decoration-none">(38 đánh giá khách sỉ)</a>
+              <span class="text-muted">|</span>
+              <span class="text-muted">Tình trạng: <span id="pdStock" class="text-success fw-bold">Còn
+                  hàng</span></span>
+            </div>
+
+            <!-- Thanh Bậc Giá Sỉ Ngang (Chuẩn Alibaba Wholesale) -->
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="small fw-bold text-uppercase text-secondary">Bảng giá sỉ theo số lượng</span>
+                <span class="small text-muted">Đơn tối thiểu: <strong id="pdMoq" class="text-dark">...</strong></span>
+              </div>
+              <div class="pd-tier-bar" id="pdTierBar">
+                <div class="pd-tier-col active">
+                  <div class="pd-tier-qty">Giá tham khảo</div>
+                  <div class="pd-tier-price" id="pdPrice">Liên hệ</div>
+                </div>
+              </div>
+              <!-- Giữ bảng giá sỉ chi tiết để tương thích & đối chiếu % tiết kiệm -->
+              <div class="mt-2 d-none" id="priceTiersContainer">
+                <div class="table-responsive">
+                  <table class="table table-sm table-bordered text-center mb-0 price-tiers-table small">
+                    <thead class="table-light">
+                      <tr id="priceTiersQtyRow"></tr>
+                    </thead>
+                    <tbody>
+                      <tr id="priceTiersPriceRow" class="text-danger fw-bold"></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4 ô Thông số nhanh -->
+            <div class="row g-2 mb-3 text-center small fw-semibold text-muted">
+              <div class="col-3">
+                <div class="border rounded-2 py-2 px-1 bg-light">
+                  <div class="text-uppercase" style="font-size:0.63rem">Độ dày</div>
+                  <div class="text-dark text-truncate" id="pdThickness">-</div>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="border rounded-2 py-2 px-1 bg-light">
+                  <div class="text-uppercase" style="font-size:0.63rem">Chiều dài</div>
+                  <div class="text-dark text-truncate" id="pdLength">-</div>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="border rounded-2 py-2 px-1 bg-light">
+                  <div class="text-uppercase" style="font-size:0.63rem">Trọng lượng</div>
+                  <div class="text-dark text-truncate" id="pdWeight">-</div>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="border rounded-2 py-2 px-1 bg-light">
+                  <div class="text-uppercase" style="font-size:0.63rem">Quy cách</div>
+                  <div class="text-dark text-truncate" id="pdPackaging">-</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chọn Biến thể / Kích thước (Nút Pills + Select đồng bộ) -->
+            <div class="mb-3">
+              <label for="pdVariant" class="form-label small fw-bold mb-1">Quy cách / Kích thước:</label>
+              <div class="pd-variant-pills mb-2" id="pdVariantPills"></div>
+              <select class="form-select form-select-sm border-brand" id="pdVariant" style="color: var(--brand);">
+                <option value="">Đang tải...</option>
+              </select>
+            </div>
+
+            <!-- Dịch vụ Tùy chỉnh (Customization) & Thời gian chuẩn bị hàng (Lead Time) -->
+            <div class="border-top pt-3 small">
+              <div class="fw-bold text-dark mb-1"><i class="bi bi-sliders me-1 text-primary"></i>Tùy chỉnh theo yêu cầu
+                (OEM):</div>
+              <div class="text-secondary mb-2">
+                • Cắt khổ rộng (12mm – 100mm) &amp; số Yard theo đơn đặt hàng.<br>
+                • Nhận in logo thương hiệu (1 – 4 màu) từ 120 cuộn.
+              </div>
+              <div class="fw-bold text-dark mb-1"><i class="bi bi-clock-history me-1 text-primary"></i>Thời gian giao
+                hàng dự kiến (Lead Time):</div>
+              <table class="table table-sm table-bordered text-center mb-0 small bg-white" id="pdLeadTimeTable">
                 <thead class="table-light">
-                  <tr id="priceTiersQtyRow"></tr>
+                  <tr>
+                    <th>Số lượng (Cuộn/Cây)</th>
+                    <th>1 - 500</th>
+                    <th>501 - 2.000</th>
+                    <th>&gt; 2.000</th>
+                  </tr>
                 </thead>
                 <tbody>
-                  <tr id="priceTiersPriceRow" class="text-danger fw-bold"></tr>
+                  <tr>
+                    <td class="fw-semibold text-secondary">Thời gian</td>
+                    <td>Trong 24h</td>
+                    <td>1 - 2 ngày</td>
+                    <td>Thương lượng</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
           </div>
-          <div class="p-3 bg-light rounded-3 mb-4">
-            <div class="fs-2 fw-bold text-danger mb-1" id="pdPrice">Liên hệ</div>
-            <div class="small text-muted">Giá sỉ tùy thuộc vào số lượng. Đơn tối thiểu: <span id="pdMoq"
-                class="fw-bold text-dark">...</span></div>
-          </div>
 
-          <!-- Bảng thông số nhanh -->
-          <div class="row g-3 mb-4 text-center small fw-semibold text-muted">
-            <div class="col-3">
-              <div class="border rounded py-2 px-1 bg-white">
-                <div class="text-uppercase" style="font-size:0.65rem">Độ dày</div>
-                <div class="text-dark text-truncate" id="pdThickness">-</div>
+          <!-- CỘT 3 (PHẢI): STICKY BUY BOX / KHUNG ĐẶT SỈ & CAM KẾT B2B -->
+          <div class="col-lg-3">
+            <div class="pd-sticky-buybox" id="pdStickyBuyBox">
+              <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                <span class="fw-bold text-dark"><i class="bi bi-calculator me-1 text-primary"></i>Đặt hàng / Báo giá
+                  sỉ</span>
+                <span class="badge bg-success-subtle text-success-emphasis">Sẵn kho</span>
               </div>
-            </div>
-            <div class="col-3">
-              <div class="border rounded py-2 px-1 bg-white">
-                <div class="text-uppercase" style="font-size:0.65rem">Chiều dài</div>
-                <div class="text-dark text-truncate" id="pdLength">-</div>
+
+              <!-- Biến thể đang chọn -->
+              <div class="small text-secondary mb-2">
+                Phân loại: <strong class="text-dark" id="pdSelectedVariantLabel">Mặc định</strong>
               </div>
-            </div>
-            <div class="col-3">
-              <div class="border rounded py-2 px-1 bg-white">
-                <div class="text-uppercase" style="font-size:0.65rem">Trọng lượng</div>
-                <div class="text-dark text-truncate" id="pdWeight">-</div>
+
+              <!-- Chọn số lượng -->
+              <div class="mb-3">
+                <label for="pdOrderQty" class="form-label small fw-semibold mb-1">Số lượng đặt:</label>
+                <div class="input-group input-group-sm">
+                  <button class="btn btn-outline-secondary" type="button" id="pdQtyMinus" aria-label="Giảm số lượng"><i
+                      class="bi bi-dash"></i></button>
+                  <input type="number" class="form-control text-center fw-bold" id="pdOrderQty" value="50" min="1"
+                    step="10">
+                  <button class="btn btn-outline-secondary" type="button" id="pdQtyPlus" aria-label="Tăng số lượng"><i
+                      class="bi bi-plus"></i></button>
+                </div>
               </div>
-            </div>
-            <div class="col-3">
-              <div class="border rounded py-2 px-1 bg-white">
-                <div class="text-uppercase" style="font-size:0.65rem">Quy cách</div>
-                <div class="text-dark text-truncate" id="pdPackaging">-</div>
+
+              <!-- Tạm tính -->
+              <div class="bg-light rounded-3 p-2 mb-3 border">
+                <div class="d-flex justify-content-between small mb-1">
+                  <span class="text-muted">Đơn giá áp dụng:</span>
+                  <strong class="text-dark" id="pdActiveUnitPrice">Liên hệ</strong>
+                </div>
+                <div class="d-flex justify-content-between align-items-center border-top pt-1">
+                  <span class="small fw-semibold">Tạm tính:</span>
+                  <span class="fs-5 fw-bold text-danger" id="pdEstimatedTotal">Liên hệ</span>
+                </div>
               </div>
-            </div>
-          </div>
 
-          <hr class="my-4">
+              <!-- Các nút CTA chính -->
+              <div class="d-grid gap-2">
+                <button type="button" class="btn pd-cta-orange rounded-pill fw-bold py-2" id="btnOpenProductQuote">
+                  <i class="bi bi-send-fill me-1"></i>GỬI YÊU CẦU BÁO GIÁ SỈ
+                </button>
+                <button type="button" class="btn btn-outline-primary rounded-pill fw-bold py-2 btn-add-cart"
+                  id="pdAddToCart" style="border-color: var(--brand); color: var(--brand);">
+                  <i class="bi bi-cart-plus me-1"></i>THÊM VÀO GIỎ HÀNG
+                </button>
+                <div class="d-flex gap-2">
+                  <a href="https://zalo.me/0909123456" target="_blank" rel="noopener"
+                    class="btn btn-sm btn-light border rounded-pill fw-semibold flex-grow-1" data-setting-zalo>
+                    <i class="bi bi-chat-dots-fill text-primary me-1"></i>Chat Zalo
+                  </a>
+                  <button type="button" class="btn btn-sm rounded-pill fw-semibold compare-btn flex-grow-1"
+                    id="pdCompareBtn" title="Thêm vào danh sách so sánh">
+                    <i class="bi bi-arrow-left-right me-1"></i>So sánh
+                  </button>
+                </div>
+              </div>
 
-          <!-- Dropdown biến thể -->
-          <div class="mb-4">
-            <label for="pdVariant" class="form-label fw-bold">Chọn Biến thể / Kích thước</label>
-            <select class="form-select border-brand" id="pdVariant" style="color: var(--brand); border-width: 2px;">
-              <option value="">Đang tải...</option>
-            </select>
-          </div>
+              <hr class="my-3">
 
-          <!-- Nút Hành động -->
-          <div class="d-flex flex-column flex-sm-row gap-3">
-            <button class="btn btn-lg text-white rounded-pill fw-bold flex-grow-1"
-              style="background-color: var(--brand);" onclick="location.href='contact.html'">
-              NHẬN BÁO GIÁ SỈ
-            </button>
-            <button class="btn btn-lg btn-outline-primary rounded-pill fw-bold flex-grow-1 btn-add-cart"
-              id="pdAddToCart" style="border-color: var(--brand); color: var(--brand);">
-              <i class="bi bi-cart-plus me-2"></i>THÊM GIỎ HÀNG
-            </button>
-          </div>
+              <!-- Cam kết Bảo vệ Đơn hàng B2B (Trade Assurance) -->
+              <div class="small">
+                <div class="fw-bold text-dark mb-2"><i class="bi bi-shield-check text-success me-1"></i>Cam kết Vũ Gia
+                  Phát:</div>
+                <ul class="list-unstyled mb-0 text-secondary d-flex flex-column gap-2" style="font-size: 0.8rem;">
+                  <li><i class="bi bi-check-circle-fill text-success me-1"></i><strong>Chuẩn quy cách:</strong> Đúng độ
+                    dày màng (mic), đủ số Yard cam kết.</li>
+                  <li><i class="bi bi-truck text-primary me-1"></i><strong>Giao nhanh 24h:</strong> Miễn phí nội thành
+                    TP.HCM cho đơn sỉ, hỗ trợ ra chành xe.</li>
+                  <li><i class="bi bi-arrow-repeat text-warning me-1"></i><strong>Bảo hành 1 đổi 1:</strong> Đổi trả
+                    miễn phí trong 7 ngày nếu lỗi keo hoặc đứt màng.</li>
+                  <li><i class="bi bi-receipt text-info me-1"></i><strong>Hóa đơn VAT:</strong> Xuất đầy đủ hóa đơn đỏ
+                    &amp; hợp đồng B2B.</li>
+                </ul>
+              </div>
 
-          <!-- Cam kết -->
-          <ul class="list-unstyled mt-4 mb-0 small text-body-secondary d-flex flex-column gap-2">
-            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Sản xuất trực tiếp, không qua trung gian.</li>
-            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Cam kết đúng độ dày, đủ chiều dài (yard).</li>
-            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Giao hàng nhanh 24h nội thành TP.HCM.</li>
-          </ul>
-
-          <!-- Chia sẻ MXH -->
-          <div class="mt-4 pt-3 border-top d-flex align-items-center gap-2">
-            <span class="small fw-bold text-muted">Chia sẻ:</span>
-            <div class="share-buttons">
-              <a href="#" class="share-btn text-primary border" onclick="shareSocial('facebook'); return false;"><i class="bi bi-facebook"></i></a>
-              <a href="#" class="share-btn text-info border" onclick="shareSocial('twitter'); return false;"><i class="bi bi-twitter"></i></a>
-              <a href="#" class="share-btn text-secondary border" onclick="shareSocial('copy'); return false;"><i class="bi bi-link-45deg"></i></a>
+              <!-- Chia sẻ MXH -->
+              <div class="mt-3 pt-2 border-top d-flex align-items-center justify-content-between">
+                <span class="small fw-semibold text-muted">Chia sẻ:</span>
+                <div class="share-buttons">
+                  <a href="#" class="share-btn share-zalo" title="Chia sẻ qua Zalo"
+                    onclick="shareSocial('zalo'); return false;">Zalo</a>
+                  <a href="#" class="share-btn share-fb" title="Chia sẻ lên Facebook"
+                    onclick="shareSocial('facebook'); return false;"><i class="bi bi-facebook"></i></a>
+                  <a href="#" class="share-btn share-copy" title="Sao chép liên kết"
+                    onclick="shareSocial('copy'); return false;"><i class="bi bi-link-45deg"></i></a>
+                </div>
+              </div>
             </div>
           </div>
 
         </div>
       </div>
 
-      <!-- ========================== TABS NỘI DUNG ========================== -->
-      <div class="row mt-5 pt-5 border-top">
-        <div class="col-12">
-          <ul class="nav nav-tabs" id="productTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button class="nav-link active fw-bold" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc-tab-pane"
-                type="button" role="tab">Mô tả chi tiết</button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link fw-bold" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs-tab-pane"
-                type="button" role="tab">Thông số kỹ thuật</button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link fw-bold" id="policy-tab" data-bs-toggle="tab" data-bs-target="#policy-tab-pane"
-                type="button" role="tab">Chính sách sỉ & Giao hàng</button>
-            </li>
-          </ul>
-          <div class="tab-content p-4 bg-white border border-top-0 rounded-bottom" id="productTabsContent">
-            <div class="tab-pane fade show active" id="desc-tab-pane" role="tabpanel" tabindex="0">
-              <div class="ck-content" id="pdDescription">
+      <!-- ========================== DẢI SẢN PHẨM THƯỜNG MUA KÈM / GỢI Ý NHANH ========================== -->
+      <section class="bg-white border rounded-4 p-3 p-lg-4 shadow-sm mb-4" id="topRecommendationsSection">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h2 class="h6 fw-bold mb-0"><i class="bi bi-stars text-warning me-1"></i>Sản phẩm thường được mua kèm tại
+            xưởng</h2>
+          <a href="products.html" class="small text-decoration-none fw-semibold">Xem tất cả <i
+              class="bi bi-chevron-right"></i></a>
+        </div>
+        <div class="row g-3 row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6" id="topRecommendationsGrid">
+          <!-- Render từ JS -->
+        </div>
+      </section>
+
+      <!-- ========================== THANH ĐIỀU HƯỚNG NEO (STICKY SECTION NAV) ========================== -->
+      <nav class="pd-section-nav rounded-top-4 border-top border-start border-end px-2 mb-0 overflow-auto"
+        id="pdSectionNav">
+        <ul class="nav flex-nowrap">
+          <li class="nav-item"><a class="nav-link active" href="#sec-specs"><i class="bi bi-sliders2 me-1"></i>Thông số
+              kỹ thuật</a></li>
+          <li class="nav-item"><a class="nav-link" href="#sec-reviews"><i class="bi bi-star me-1"></i>Đánh giá khách sỉ
+              (38)</a></li>
+          <li class="nav-item"><a class="nav-link" href="#sec-supplier"><i class="bi bi-building-check me-1"></i>Năng
+              lực nhà xưởng</a></li>
+          <li class="nav-item"><a class="nav-link" href="#sec-description"><i
+                class="bi bi-file-earmark-richtext me-1"></i>Mô tả chi tiết &amp; Ứng dụng</a></li>
+          <li class="nav-item"><a class="nav-link" href="#sec-faq"><i class="bi bi-question-circle me-1"></i>Câu hỏi
+              thường gặp</a></li>
+        </ul>
+      </nav>
+
+      <!-- ========================== NỘI DUNG CHI TIẾT DẠNG LONG-SCROLL B2B ========================== -->
+      <div class="bg-white border border-top-0 rounded-bottom-4 p-3 p-lg-4 shadow-sm mb-5">
+        <div class="row g-4">
+
+          <!-- CỘT NỘI DUNG CHÍNH (TRÁI - 9 CỘT) -->
+          <div class="col-lg-9">
+
+            <!-- 1. THÔNG SỐ KỸ THUẬT & ĐÓNG GÓI (KEY ATTRIBUTES) -->
+            <section id="sec-specs" class="mb-5 pt-2">
+              <h2 class="h5 fw-bold text-dark mb-3">Thông số kỹ thuật sản phẩm (Key Attributes)</h2>
+              <div class="table-responsive mb-4">
+                <table class="table table-bordered pd-attrs-table mb-0">
+                  <tbody>
+                    <tr>
+                      <th>Màng nền (Material)</th>
+                      <td id="tbMaterial">-</td>
+                      <th>Loại keo (Adhesive)</th>
+                      <td id="tbAdhesion">-</td>
+                    </tr>
+                    <tr>
+                      <th>Độ dày màng (Thickness)</th>
+                      <td id="tbThickness">-</td>
+                      <th>Chiều dài (Length)</th>
+                      <td id="tbLength">-</td>
+                    </tr>
+                    <tr>
+                      <th>Trọng lượng (Weight)</th>
+                      <td id="tbWeight">-</td>
+                      <th>Màu sắc (Color)</th>
+                      <td id="tbColor">-</td>
+                    </tr>
+                    <tr>
+                      <th>Ứng dụng chính</th>
+                      <td id="tbApplication">-</td>
+                      <th>Thương hiệu</th>
+                      <td>VGP Win Win Tape (Vũ Gia Phát)</td>
+                    </tr>
+                    <tr>
+                      <th>Xuất xứ</th>
+                      <td>TP. Hồ Chí Minh, Việt Nam</td>
+                      <th>Nhận gia công (OEM)</th>
+                      <td>Có (Cắt khổ &amp; In logo theo yêu cầu)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <h3 class="h6 fw-bold text-dark mb-2">Quy cách đóng gói &amp; Giao nhận (Packaging &amp; Delivery)</h3>
+              <div class="table-responsive">
+                <table class="table table-bordered pd-attrs-table mb-0">
+                  <tbody>
+                    <tr>
+                      <th>Quy cách đóng cây/thùng</th>
+                      <td id="tbPackagingDetail">6 cuộn/cây, 20 cây/bao (hoặc đóng thùng carton)</td>
+                      <th>Đơn tối thiểu (MOQ)</th>
+                      <td id="tbMoqDetail">1 bao / 50 cuộn</td>
+                    </tr>
+                    <tr>
+                      <th>Năng lực cung ứng</th>
+                      <td>50.000 cuộn / ngày</td>
+                      <th>Phương thức giao hàng</th>
+                      <td>Xe tải xưởng nội thành HCM / Gửi chành xe đi tỉnh</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <hr class="my-4">
+
+            <!-- 2. ĐÁNH GIÁ TỪ KHÁCH HÀNG DOANH NGHIỆP (REVIEWS) -->
+            <section id="sec-reviews" class="mb-5 pt-2">
+              <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <h2 class="h5 fw-bold text-dark mb-0">Đánh giá thực tế từ Khách mua sỉ &amp; Doanh nghiệp</h2>
+                <span class="badge bg-success-subtle text-success-emphasis"><i class="bi bi-check2-circle me-1"></i>100%
+                  Đơn hàng xác thực</span>
+              </div>
+
+              <div class="row g-4 align-items-center bg-light rounded-4 p-3 border mb-4">
+                <div class="col-md-4 text-center border-end-md">
+                  <div class="display-5 fw-bold text-dark">4.9<span class="fs-5 text-muted">/5.0</span></div>
+                  <div class="text-warning mb-1">
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                      class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                  </div>
+                  <div class="small text-secondary">Dựa trên 38 đánh giá từ đối tác kho vận &amp; nhà máy</div>
+                </div>
+                <div class="col-md-8">
+                  <div class="d-flex align-items-center gap-2 mb-2 small">
+                    <span style="width: 150px;" class="fw-semibold">Độ bám dính keo:</span>
+                    <div class="progress flex-grow-1" style="height: 8px;">
+                      <div class="progress-bar bg-warning" style="width: 98%"></div>
+                    </div>
+                    <strong style="width: 32px;">4.9</strong>
+                  </div>
+                  <div class="d-flex align-items-center gap-2 mb-2 small">
+                    <span style="width: 150px;" class="fw-semibold">Đúng số Yard &amp; độ dày:</span>
+                    <div class="progress flex-grow-1" style="height: 8px;">
+                      <div class="progress-bar bg-warning" style="width: 100%"></div>
+                    </div>
+                    <strong style="width: 32px;">5.0</strong>
+                  </div>
+                  <div class="d-flex align-items-center gap-2 mb-2 small">
+                    <span style="width: 150px;" class="fw-semibold">Tốc độ giao hàng:</span>
+                    <div class="progress flex-grow-1" style="height: 8px;">
+                      <div class="progress-bar bg-warning" style="width: 96%"></div>
+                    </div>
+                    <strong style="width: 32px;">4.8</strong>
+                  </div>
+                  <div class="d-flex align-items-center gap-2 small">
+                    <span style="width: 150px;" class="fw-semibold">Đóng gói &amp; Hỗ trợ:</span>
+                    <div class="progress flex-grow-1" style="height: 8px;">
+                      <div class="progress-bar bg-warning" style="width: 98%"></div>
+                    </div>
+                    <strong style="width: 32px;">4.9</strong>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Danh sách đánh giá -->
+              <div class="d-flex flex-column gap-3" id="pdReviewsList">
+                <!-- Render từ JS (lấy từ bảng testimonial hoặc fallback) -->
+              </div>
+            </section>
+
+            <hr class="my-4">
+
+            <!-- 3. THẺ HỒ SƠ NHÀ SẢN XUẤT (VERIFIED SUPPLIER PROFILE) -->
+            <section id="sec-supplier" class="mb-5 pt-2">
+              <div class="pd-supplier-banner">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+                  <div class="d-flex align-items-center gap-3">
+                    <img src="images/logo.webp" alt="Vũ Gia Phát" class="rounded-3 bg-white p-2 border"
+                      style="width: 68px; height: 68px; object-fit: contain;">
+                    <div>
+                      <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <h2 class="h5 fw-bold text-dark mb-0">CÔNG TY TNHH SX - TM VŨ GIA PHÁT</h2>
+                        <span class="pd-verified-badge"><i class="bi bi-patch-check-fill"></i> Xưởng Sản Xuất Trực
+                          Tiếp</span>
+                      </div>
+                      <p class="small text-secondary mb-0 mt-1">Chuyên sản xuất Băng keo OPP trong/đục, Băng keo in
+                        logo, Băng keo màu, Màng PE quấn Pallet, Dây đai PP/PET</p>
+                    </div>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <a href="about.html" class="btn btn-sm btn-outline-primary rounded-pill fw-semibold px-3">Xem hồ sơ
+                      xưởng</a>
+                    <a href="contact.html" class="btn btn-sm pd-cta-orange rounded-pill fw-semibold px-3">Liên hệ báo
+                      giá</a>
+                  </div>
+                </div>
+
+                <div class="row g-3 bg-white rounded-3 p-3 border text-center">
+                  <div class="col-6 col-md-3 border-end">
+                    <div class="fs-5 fw-bold text-primary">2.500+ m²</div>
+                    <div class="small text-muted">Diện tích nhà xưởng</div>
+                  </div>
+                  <div class="col-6 col-md-3 border-end-md">
+                    <div class="fs-5 fw-bold text-primary">12+ Máy</div>
+                    <div class="small text-muted">Dây chuyền phân cuộn &amp; in</div>
+                  </div>
+                  <div class="col-6 col-md-3 border-end">
+                    <div class="fs-5 fw-bold text-success">99.4%</div>
+                    <div class="small text-muted">Tỷ lệ giao hàng đúng hẹn</div>
+                  </div>
+                  <div class="col-6 col-md-3">
+                    <div class="fs-5 fw-bold text-danger">1.500+</div>
+                    <div class="small text-muted">Đối tác doanh nghiệp &amp; đại lý</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 4. MÔ TẢ CHI TIẾT SẢN PHẨM & VISUAL B2B LANDING PAGE -->
+            <section id="sec-description" class="mb-5 pt-2">
+              <div class="pd-showcase-header">
+                <i class="bi bi-file-earmark-richtext"></i> MÔ TẢ CHI TIẾT &amp; ĐẶC ĐIỂM KỸ THUẬT
+              </div>
+
+              <!-- Nội dung mô tả riêng của sản phẩm từ Database -->
+              <div class="ck-content mb-4 p-3 bg-light rounded-3 border" id="pdDescription">
                 Đang tải nội dung...
               </div>
-            </div>
-            <div class="tab-pane fade" id="specs-tab-pane" role="tabpanel" tabindex="0">
-              <table class="table table-bordered table-striped">
-                <tbody>
-                  <tr>
-                    <th style="width:30%">Màng nền</th>
-                    <td id="tbMaterial">-</td>
-                  </tr>
-                  <tr>
-                    <th>Keo dính</th>
-                    <td id="tbAdhesion">-</td>
-                  </tr>
-                  <tr>
-                    <th>Độ dày</th>
-                    <td id="tbThickness">-</td>
-                  </tr>
-                  <tr>
-                    <th>Chiều dài</th>
-                    <td id="tbLength">-</td>
-                  </tr>
-                  <tr>
-                    <th>Trọng lượng</th>
-                    <td id="tbWeight">-</td>
-                  </tr>
-                  <tr>
-                    <th>Màu sắc</th>
-                    <td id="tbColor">-</td>
-                  </tr>
-                  <tr>
-                    <th>Ứng dụng</th>
-                    <td id="tbApplication">-</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="tab-pane fade" id="policy-tab-pane" role="tabpanel" tabindex="0">
-              <h5 class="fw-bold">Chính sách lấy sỉ</h5>
-              <p>Khách hàng mua từ 100 cuộn trở lên sẽ được áp dụng mức chiết khấu từ 5% - 20% tùy số lượng.</p>
-              <h5 class="fw-bold mt-4">Giao hàng</h5>
-              <p>- Miễn phí giao hàng nội thành TP.HCM cho đơn hàng trên 2 triệu VNĐ.<br>- Khách tỉnh: Gửi chành xe (phí
-                thương lượng).</p>
-              <h5 class="fw-bold mt-4">Đổi trả</h5>
-              <p>Đổi trả miễn phí trong 7 ngày nếu lỗi do nhà sản xuất (keo không dính, đứt màng liên tục).</p>
+
+              <!-- Bảng Tổng hợp Quy cách Sản xuất Phổ biến tại Xưởng -->
+              <div class="mb-4">
+                <h3 class="h6 fw-bold text-uppercase text-primary mb-2">
+                  <i class="bi bi-table me-1"></i>Bảng quy cách sản xuất tiêu chuẩn &amp; nhận đặt cắt theo yêu cầu
+                </h3>
+                <div class="table-responsive">
+                  <table class="table table-bordered table-striped text-center align-middle small mb-0">
+                    <thead class="table-primary">
+                      <tr>
+                        <th>Tiêu chí kỹ thuật</th>
+                        <th>Thông số tiêu chuẩn tại Xưởng Vũ Gia Phát</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="fw-bold">Khổ rộng thông dụng</td>
+                        <td>12mm (1.2F), 24mm (2.4F), 36mm (3.6F), 48mm (4.8F - Phổ biến nhất), 60mm (6F), 70mm (7F)
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="fw-bold">Chiều dài cuộn (Yard)</td>
+                        <td>80 Yard, 100 Yard, 150 Yard, 200 Yard, 300 Yard, Cuộn Jumbo 1.000m – 4.000m</td>
+                      </tr>
+                      <tr>
+                        <td class="fw-bold">Độ dày màng keo</td>
+                        <td>40 mic, 43 mic, 45 mic, 50 mic (Siêu dính), 55 mic – 60 mic (Đóng hàng nặng/xuất khẩu)</td>
+                      </tr>
+                      <tr>
+                        <td class="fw-bold">Màu sắc cung ứng</td>
+                        <td>Trong suốt, Đục, Vàng chanh, Đỏ, Xanh dương, Xanh lá, Cam, Đen, Vàng-Đen cảnh báo</td>
+                      </tr>
+                      <tr>
+                        <td class="fw-bold">In ấn thương hiệu</td>
+                        <td>Nhận in chữ "Hàng Dễ Vỡ" hoặc in Logo công ty từ 1 – 4 màu sắc nét, không bong tróc</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Lưới Danh mục Các dòng Băng keo & Vật tư chủ lực của Xưởng (Giống hình mẫu) -->
+              <div class="mb-5">
+                <h3 class="h6 fw-bold text-uppercase text-primary mb-3">
+                  <i class="bi bi-grid-3x3-gap-fill me-1"></i>Các dòng sản phẩm sản xuất chủ lực tại Vũ Gia Phát
+                </h3>
+                <div class="row g-3 row-cols-2 row-cols-md-3" id="pdCatalogShowcaseGrid">
+                  <!-- Render động từ danh sách sản phẩm trong JS -->
+                </div>
+              </div>
+
+              <!-- Poster / Visual Showcase Cấu tạo & Ưu điểm Chất lượng -->
+              <div class="pd-showcase-header">
+                <i class="bi bi-award-fill"></i> CẤU TẠO MÀNG KEO &amp; ƯU ĐIỂM VƯỢT TRỘI
+              </div>
+              <div class="row g-4 align-items-center mb-5 bg-light rounded-4 p-3 p-md-4 border">
+                <div class="col-md-6 text-center">
+                  <img src="images/bopp_tape.webp" alt="Cấu tạo băng keo Vũ Gia Phát" id="pdShowcaseMainImg"
+                    class="img-fluid rounded-3 shadow-sm bg-white p-2" style="max-height: 320px; object-fit: contain;">
+                </div>
+                <div class="col-md-6">
+                  <h3 class="h5 fw-bold text-dark mb-3">Tiêu chuẩn chất lượng VGP Win Win Tape</h3>
+                  <div class="d-flex flex-column gap-3">
+                    <div class="d-flex gap-3 align-items-start bg-white p-3 rounded-3 border shadow-sm">
+                      <span class="badge bg-primary rounded-circle p-2"><i class="bi bi-layers-fill fs-6"></i></span>
+                      <div>
+                        <div class="fw-bold text-dark">Màng BOPP / PVC nguyên sinh dẻo dai</div>
+                        <div class="small text-secondary">Chịu lực kéo căng lớn, không bị đứt ngang khi kéo tay hoặc
+                          chạy máy đóng thùng tự động.</div>
+                      </div>
+                    </div>
+                    <div class="d-flex gap-3 align-items-start bg-white p-3 rounded-3 border shadow-sm">
+                      <span class="badge bg-danger rounded-circle p-2"><i class="bi bi-droplet-fill fs-6"></i></span>
+                      <div>
+                        <div class="fw-bold text-dark">Lớp keo Acrylic / Rubber độ bám dính cực cao</div>
+                        <div class="small text-secondary">Bám dính tức thì trên thùng carton tái chế, bề mặt nhựa, kim
+                          loại; chịu được môi trường kho lạnh và container xuất khẩu.</div>
+                      </div>
+                    </div>
+                    <div class="d-flex gap-3 align-items-start bg-white p-3 rounded-3 border shadow-sm">
+                      <span class="badge bg-success rounded-circle p-2"><i class="bi bi-rulers fs-6"></i></span>
+                      <div>
+                        <div class="fw-bold text-dark">Cam kết chuẩn 100% số Yard &amp; trọng lượng</div>
+                        <div class="small text-secondary">Lõi giấy mỏng cứng cáp, cuộn băng keo cuốn chặt không bọt khí,
+                          tối ưu chi phí trên từng mét băng keo.</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Lưới Ứng dụng Thực tế (Wide Application Scenarios - 3x3) -->
+              <div class="pd-showcase-header">
+                <i class="bi bi-boxes"></i> ỨNG DỤNG THỰC TẾ TRONG ĐÓNG GÓI &amp; CÔNG NGHIỆP
+              </div>
+              <p class="text-secondary small mb-3">
+                Sản phẩm băng keo và màng đóng gói Vũ Gia Phát được tin dùng rộng rãi tại các nhà máy sản xuất, kho bãi
+                thương mại điện tử, công ty giao nhận logistics và khu công nghiệp:
+              </p>
+              <div class="row g-3 mb-5">
+                <div class="col-6 col-md-4">
+                  <div class="pd-app-card">
+                    <img src="images/products/opp_trong1.webp" alt="Đóng thùng Carton xuất khẩu" loading="lazy">
+                    <div class="pd-app-caption">1. Đóng thùng Carton xuất khẩu</div>
+                  </div>
+                </div>
+                <div class="col-6 col-md-4">
+                  <div class="pd-app-card">
+                    <img src="images/products/opp_duc1.webp" alt="Kho vận & Logistics TMĐT" loading="lazy">
+                    <div class="pd-app-caption">2. Kho vận &amp; Logistics TMĐT</div>
+                  </div>
+                </div>
+                <div class="col-6 col-md-4">
+                  <div class="pd-app-card">
+                    <img src="images/products/PE1.webp" alt="Quấn Pallet chống ẩm & trầy xước" loading="lazy">
+                    <div class="pd-app-caption">3. Quấn Pallet hàng hóa công nghiệp</div>
+                  </div>
+                </div>
+                <div class="col-6 col-md-4">
+                  <div class="pd-app-card">
+                    <img src="images/products/logo_tape.webp" alt="Niêm phong hàng hóa thương hiệu" loading="lazy">
+                    <div class="pd-app-caption">4. Niêm phong &amp; Quảng bá thương hiệu</div>
+                  </div>
+                </div>
+                <div class="col-6 col-md-4">
+                  <div class="pd-app-card">
+                    <img src="images/products/bangkeo_1_1_1601719647235.webp" alt="Phân loại hàng hóa theo màu"
+                      loading="lazy">
+                    <div class="pd-app-caption">5. Đánh dấu &amp; Phân loại mã hàng</div>
+                  </div>
+                </div>
+                <div class="col-6 col-md-4">
+                  <div class="pd-app-card">
+                    <img src="images/products/bangkeo_3_1_60598884351.webp" alt="Cảnh báo & Dán sàn nhà xưởng"
+                      loading="lazy">
+                    <div class="pd-app-caption">6. Dán sàn &amp; Phân luồng nhà xưởng</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Hồ sơ Nhà máy, Dây chuyền sản xuất & Đóng gói Giao hàng -->
+              <div class="pd-showcase-header">
+                <i class="bi bi-building-gear"></i> NĂNG LỰC NHÀ MÁY &amp; QUY TRÌNH ĐÓNG GÓI - GIAO HÀNG
+              </div>
+              <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                  <div class="card h-100 border shadow-sm">
+                    <img src="images/factory1.webp" class="card-img-top" alt="Nhà xưởng Vũ Gia Phát"
+                      style="height: 180px; object-fit: cover;" loading="lazy">
+                    <div class="card-body p-3">
+                      <h4 class="h6 fw-bold text-dark">1. Hệ thống máy chia cuộn tốc độ cao</h4>
+                      <p class="small text-secondary mb-0">Đảm bảo mặt cắt phẳng mịn, độ căng đồng đều và chính xác
+                        tuyệt đối về chiều dài (Yard).</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="card h-100 border shadow-sm">
+                    <img src="images/factory2.jpg" class="card-img-top" alt="Kho nguyên liệu Jumbo"
+                      style="height: 180px; object-fit: cover;" loading="lazy">
+                    <div class="card-body p-3">
+                      <h4 class="h6 fw-bold text-dark">2. Kho cuộn Jumbo trữ lượng lớn</h4>
+                      <p class="small text-secondary mb-0">Luôn sẵn sàng nguyên liệu màng BOPP, PVC, PE chất lượng cao
+                        để đáp ứng đơn hàng gấp số lượng lớn.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="card h-100 border shadow-sm">
+                    <img src="images/delivery_trucks.webp" class="card-img-top" alt="Đội xe giao hàng Vũ Gia Phát"
+                      style="height: 180px; object-fit: cover;" loading="lazy">
+                    <div class="card-body p-3">
+                      <h4 class="h6 fw-bold text-dark">3. Đội xe tải giao hàng tận nơi</h4>
+                      <p class="small text-secondary mb-0">Giao nhanh trong 24h tại TP.HCM, Bình Dương, Đồng Nai, Long
+                        An và gửi chành xe đi toàn quốc.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 5. CÂU HỎI THƯỜNG GẶP (FAQ B2B) -->
+            <section id="sec-faq" class="pt-2">
+              <div class="pd-showcase-header">
+                <i class="bi bi-patch-question-fill"></i> CÂU HỎI THƯỜNG GẶP KHI ĐẶT SỈ (FAQ)
+              </div>
+              <div class="accordion" id="pdFaqAccordion">
+                <div class="accordion-item">
+                  <h3 class="accordion-header">
+                    <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse"
+                      data-bs-target="#faq1">
+                      1. Số lượng đặt hàng tối thiểu (MOQ) để được tính giá sỉ tận xưởng là bao nhiêu?
+                    </button>
+                  </h3>
+                  <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#pdFaqAccordion">
+                    <div class="accordion-body small text-secondary">
+                      Với các dòng băng keo trong/đục và màng PE quy cách thông dụng, Vũ Gia Phát áp dụng giá sỉ ngay từ
+                      <strong>1 bao (20 cây / 120 cuộn)</strong>. Khách hàng lấy từ 5 bao, 10 bao hoặc nguyên pallet sẽ
+                      có mức chiết khấu bậc thang tốt hơn nữa.
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h3 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse"
+                      data-bs-target="#faq2">
+                      2. Xưởng có hỗ trợ gửi mẫu thử trước khi ký hợp đồng số lượng lớn không?
+                    </button>
+                  </h3>
+                  <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#pdFaqAccordion">
+                    <div class="accordion-body small text-secondary">
+                      <strong>Có.</strong> Chúng tôi hỗ trợ gửi cuộn mẫu miễn phí để bộ phận thu mua và kho vận của quý
+                      doanh nghiệp kiểm tra trực tiếp độ dính, độ dày màng và chiều dài thực tế trước khi đặt hàng.
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h3 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse"
+                      data-bs-target="#faq3">
+                      3. Đặt sản xuất băng keo in logo riêng mất bao lâu?
+                    </button>
+                  </h3>
+                  <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#pdFaqAccordion">
+                    <div class="accordion-body small text-secondary">
+                      Thời gian thiết kế maket là <strong>miễn phí trong ngày</strong>. Sau khi duyệt mẫu, thời gian làm
+                      trục đồng và sản xuất lô đầu tiên từ 5 – 7 ngày làm việc. Các lần đặt tái bản sau chỉ mất 2 – 3
+                      ngày.
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h3 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse"
+                      data-bs-target="#faq4">
+                      4. Chính sách công nợ và hóa đơn VAT cho công ty như thế nào?
+                    </button>
+                  </h3>
+                  <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#pdFaqAccordion">
+                    <div class="accordion-body small text-secondary">
+                      Vũ Gia Phát xuất đầy đủ hóa đơn GTGT (VAT) hợp lệ, biên bản bàn giao và hợp đồng nguyên tắc. Đối
+                      với khách hàng nhà máy mua định kỳ hàng tháng, công ty hỗ trợ chính sách công nợ linh hoạt từ 15 –
+                      30 ngày.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+          </div>
+
+          <!-- CỘT PHỤ BÊN PHẢI TRONG VÙNG NỘI DUNG (3 CỘT - STICKY QUICK INQUIRY) -->
+          <div class="col-lg-3 d-none d-lg-block">
+            <div class="sticky-top" style="top: 130px;">
+              <div class="border rounded-4 p-3 bg-light shadow-sm mb-3">
+                <div class="fw-bold text-dark mb-1">Nhận bảng giá sỉ hôm nay</div>
+                <p class="small text-secondary mb-3">Để lại SĐT/Zalo, bộ phận kinh doanh xưởng sẽ gửi báo giá chiết khấu
+                  cao nhất trong 15 phút.</p>
+                <form id="pdSideLeadForm">
+                  <div class="mb-2">
+                    <input type="text" class="form-control form-control-sm" id="sideLeadName"
+                      placeholder="Tên của bạn / Công ty *" required>
+                  </div>
+                  <div class="mb-2">
+                    <input type="tel" class="form-control form-control-sm" id="sideLeadPhone"
+                      placeholder="Số điện thoại / Zalo *" required>
+                  </div>
+                  <div class="mb-2">
+                    <input type="text" class="form-control form-control-sm" id="sideLeadQty"
+                      placeholder="Số lượng dự kiến (VD: 500 cuộn)">
+                  </div>
+                  <button type="submit" class="btn btn-sm pd-cta-orange w-100 rounded-pill fw-bold py-2">
+                    GỬI BÁO GIÁ QUA ZALO
+                  </button>
+                </form>
+              </div>
+
+              <div class="border rounded-4 p-3 bg-white shadow-sm small">
+                <div class="fw-bold text-dark mb-2"><i class="bi bi-headset text-primary me-1"></i>Hotline Tư vấn Sỉ
+                  24/7</div>
+                <div class="fs-5 fw-bold text-danger mb-1" data-setting="company_phone">0918 616 835</div>
+                <div class="text-muted mb-2">Hỗ trợ báo giá nhanh cho phòng thu mua, nhà máy &amp; đại lý phân phối.
+                </div>
+                <a href="compare.html" class="btn btn-sm btn-outline-secondary w-100 rounded-pill">
+                  <i class="bi bi-arrow-left-right me-1"></i>Xem bảng so sánh SP
+                </a>
+              </div>
             </div>
           </div>
+
         </div>
       </div>
 
-    </div>
       <!-- ========================== SẢN PHẨM CÙNG DANH MỤC ========================== -->
-      <div class="mt-5 pt-5 border-top">
-        <h3 class="fw-bold mb-4">Sản phẩm cùng danh mục</h3>
+      <div class="mt-4 pt-4 border-top related-products" id="relatedProducts">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3 class="h5 fw-bold mb-0">Sản phẩm cùng danh mục</h3>
+          <a href="products.html" class="small text-decoration-none fw-semibold">Xem thêm <i
+              class="bi bi-arrow-right"></i></a>
+        </div>
         <div class="row g-3 g-md-4" id="relatedProductsGrid">
           <!-- Render from JS -->
         </div>
       </div>
 
+      <!-- ========================== LƯỚI KHÁM PHÁ THÊM SẢN PHẨM TẠI XƯỞNG (6 CỘT) ========================== -->
+      <div class="mt-5 pt-4 border-top" id="moreFactoryProducts">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3 class="h5 fw-bold mb-0">Khám phá thêm danh mục vật tư đóng gói tại Xưởng</h3>
+          <a href="products.html" class="small text-decoration-none fw-semibold">Tất cả sản phẩm <i
+              class="bi bi-grid"></i></a>
+        </div>
+        <div class="row g-3 row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6" id="moreProductsGrid">
+          <!-- Render from JS -->
+        </div>
+      </div>
+
       <!-- ========================== ĐÃ XEM GẦN ĐÂY ========================== -->
-      <div class="mt-5 pt-5 border-top d-none" id="recentProductsSection">
-        <h3 class="fw-bold mb-4">Sản phẩm đã xem</h3>
+      <div class="mt-5 pt-4 border-top d-none recently-viewed" id="recentProductsSection">
+        <h3 class="h5 fw-bold mb-3">Sản phẩm đã xem gần đây</h3>
         <div class="row g-3 g-md-4" id="recentProductsGrid">
           <!-- Render from JS -->
         </div>
       </div>
 
+    </div>
   </main>
 
-  <!-- Script SEO và Product Detail -->
-  <script src="js/seo.js"></script>
-  <script src="js/product-detail.js"></script>
+  <!-- ============================ MODAL YÊU CẦU BÁO GIÁ SỈ NHANH ============================ -->
+  <div class="modal fade" id="productQuoteModal" tabindex="-1" aria-labelledby="productQuoteModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header text-white" style="background: linear-gradient(135deg, #0b5ed7 0%, #084298 100%);">
+          <h5 class="modal-title fw-bold" id="productQuoteModalLabel"><i class="bi bi-send-check me-2"></i>Yêu cầu Báo
+            giá Sỉ Tận Xưởng</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+        </div>
+        <form id="productQuoteForm">
+          <div class="modal-body p-4">
+            <div class="bg-light p-3 rounded-3 border mb-3 small">
+              <div class="fw-bold text-primary mb-1" id="pqProductName">Sản phẩm</div>
+              <div class="text-secondary">Phân loại: <strong id="pqVariantName">Mặc định</strong> • Số lượng: <strong
+                  id="pqQtyLabel">50</strong></div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Họ tên / Tên Công ty <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="pqCustomerName" required
+                placeholder="Nhập họ tên hoặc tên doanh nghiệp">
+            </div>
+            <div class="row g-2 mb-3">
+              <div class="col-sm-6">
+                <label class="form-label small fw-bold">Số điện thoại / Zalo <span class="text-danger">*</span></label>
+                <input type="tel" class="form-control" id="pqCustomerPhone" required placeholder="09xx xxx xxx">
+              </div>
+              <div class="col-sm-6">
+                <label class="form-label small fw-bold">Số lượng cần báo giá</label>
+                <input type="text" class="form-control" id="pqCustomerQty" placeholder="VD: 500 cuộn / 10 bao">
+              </div>
+            </div>
+            <div class="mb-0">
+              <label class="form-label small fw-bold">Ghi chú thêm (In logo, khổ cắt, địa chỉ giao...)</label>
+              <textarea class="form-control" id="pqCustomerNote" rows="2"
+                placeholder="Nhập yêu cầu cụ thể nếu có..."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer border-0 pt-0 px-4 pb-4">
+            <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Hủy</button>
+            <button type="submit" class="btn pd-cta-orange rounded-pill fw-bold px-4" id="pqSubmitBtn">
+              <i class="bi bi-send-fill me-1"></i>Gửi Yêu Cầu Ngay
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <!-- ============================ FOOTER ============================ -->
   <script src="js/footer.js"></script>
 
-
+  <!-- Modal xem nhanh sản phẩm — nội dung do main.js đổ vào -->
+  <div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fs-6" id="quickViewLabel">Chi tiết sản phẩm</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+        </div>
+        <div class="modal-body" id="quickViewBody"></div>
+      </div>
+    </div>
   </div>
 
   <button type="button" class="btn btn-primary to-top" aria-label="Lên đầu trang">
@@ -278,10 +944,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- Supabase JS Client & Cấu hình -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
-
-  <!-- Bản nhúng dự phòng cuối cùng: dùng khi mở trang bằng file:// (CORS chặn fetch) -->
-
+  <script src="js/seo.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/product-detail.js"></script>
 </body>
 
 </html>

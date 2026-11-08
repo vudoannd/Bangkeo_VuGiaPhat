@@ -1,0 +1,27 @@
+{
+  "name": "Băng Keo & Màng PE Vũ Gia Phát — VGP Win Win Tape",
+  "short_name": "VGP Tape",
+  "description": "Xưởng sản xuất băng keo đóng thùng OPP và phân phối sỉ màng PE quấn hàng giá rẻ tại TP.HCM.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#017DC7",
+  "background_color": "#ffffff",
+  "lang": "vi",
+  "icons": [
+    {
+      "src": "images/logo.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/logo.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ]
+}
+

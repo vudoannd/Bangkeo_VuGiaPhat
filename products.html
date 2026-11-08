@@ -43,11 +43,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <li class="breadcrumb-item active text-white-50" aria-current="page">Sản phẩm</li>
           </ol>
         </nav>
-        <h1 class="mb-2">Sản phẩm băng keo</h1>
-        <p class="mb-0 opacity-75" style="max-width:560px">
-          Toàn bộ mẫu băng keo đang có tại kho, phân theo chất kết dính.
-          Dùng bộ lọc bên dưới để tìm nhanh loại bạn cần.
-        </p>
+        <div id="seoBanner">
+          <h1 class="mb-2" id="seoH1">Sản phẩm băng keo</h1>
+          <p class="mb-0 opacity-75" style="max-width:560px" id="seoDescTop">
+            Toàn bộ mẫu băng keo đang có tại kho, phân theo chất kết dính.
+            Dùng bộ lọc bên dưới để tìm nhanh loại bạn cần.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -104,6 +106,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <button type="button" class="btn btn-outline-primary rounded-pill px-4" id="loadMoreBtn">
             <i class="bi bi-plus-circle me-1"></i>Xem thêm sản phẩm
           </button>
+        </div>
+
+        <!-- Nội dung bài viết SEO theo danh mục (ẩn mặc định, hiện khi danh mục có seo_article) -->
+        <div class="mt-5 pt-4 border-top" id="seoContentBottom" style="display: none;">
+          <div class="card border shadow-sm p-4 bg-white">
+            <div class="ck-content" id="seoArticle"></div>
+          </div>
         </div>
 
       </div>
